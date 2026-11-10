@@ -1,0 +1,286 @@
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                    08/27/2026  12:11:38  PAGE 1
+
+
+BL51 BANKED LINKER/LOCATER V6.22.4.0, INVOKED BY:
+C:\KEIL_V5\C51\BIN\BL51.EXE .\Objects\cat3.obj TO .\Objects\NeelCAT3 PRINT (.\Listings\NeelCAT3.m51)
+
+
+MEMORY MODEL: SMALL
+
+
+INPUT MODULES INCLUDED:
+  .\Objects\cat3.obj (CAT3)
+  C:\KEIL_V5\C51\LIB\C51S.LIB (?C_STARTUP)
+  C:\KEIL_V5\C51\LIB\C51S.LIB (?C?SIDIV)
+  C:\KEIL_V5\C51\LIB\C51S.LIB (?C_INIT)
+  C:\KEIL_V5\C51\LIB\C51S.LIB (?C?UIDIV)
+
+
+LINK MAP OF MODULE:  .\Objects\NeelCAT3 (CAT3)
+
+
+            TYPE    BASE      LENGTH    RELOCATION   SEGMENT NAME
+            -----------------------------------------------------
+
+            * * * * * * *   D A T A   M E M O R Y   * * * * * * *
+            REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
+            DATA    0008H     0004H     UNIT         ?DT?CAT3
+            IDATA   000CH     0001H     UNIT         ?STACK
+
+            * * * * * * *   C O D E   M E M O R Y   * * * * * * *
+            CODE    0000H     0003H     ABSOLUTE     
+                    0003H     07FDH                  *** GAP ***
+            CODE    0800H     008CH     UNIT         ?C_C51STARTUP
+            CODE    088CH     008BH     UNIT         ?C?LIB_CODE
+            CODE    0917H     0073H     UNIT         ?PR?COUNTER?CAT3
+            CODE    098AH     0046H     UNIT         ?PR?MAIN?CAT3
+            CODE    09D0H     0034H     UNIT         ?PR?SEQ?CAT3
+            CODE    0A04H     0030H     UNIT         ?PR?DELAY?CAT3
+            CODE    0A34H     0024H     UNIT         ?PR?INTR?CAT3
+            CODE    0A58H     0022H     UNIT         ?PR?PATTERN1?CAT3
+            CODE    0A7AH     001DH     UNIT         ?PR?DELAY2?CAT3
+            CODE    0A97H     001CH     UNIT         ?PR?PATTERN2?CAT3
+            CODE    0AB3H     0017H     UNIT         ?PR?KEYPRESS?CAT3
+            CODE    0ACAH     0009H     UNIT         ?C_INITSEG
+
+
+
+OVERLAY MAP OF MODULE:   .\Objects\NeelCAT3 (CAT3)
+
+
+SEGMENT
+  +--> CALLED SEGMENT
+---------------------
+?C_C51STARTUP
+  +--> ?PR?MAIN?CAT3
+  +--> ?C_INITSEG
+
+?PR?MAIN?CAT3
+  +--> ?PR?INTR?CAT3
+  +--> ?PR?SEQ?CAT3
+  +--> ?PR?COUNTER?CAT3
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  08/27/2026  12:11:38  PAGE 2
+
+
+  +--> ?PR?PATTERN1?CAT3
+  +--> ?PR?PATTERN2?CAT3
+
+?PR?INTR?CAT3
+  +--> ?PR?KEYPRESS?CAT3
+
+?PR?KEYPRESS?CAT3
+  +--> ?PR?DELAY2?CAT3
+
+?PR?SEQ?CAT3
+  +--> ?PR?INTR?CAT3
+  +--> ?PR?DELAY?CAT3
+
+?PR?DELAY?CAT3
+  +--> ?PR?INTR?CAT3
+
+?PR?COUNTER?CAT3
+  +--> ?PR?INTR?CAT3
+  +--> ?PR?DELAY?CAT3
+
+?PR?PATTERN1?CAT3
+  +--> ?PR?INTR?CAT3
+  +--> ?PR?DELAY?CAT3
+
+?PR?PATTERN2?CAT3
+  +--> ?PR?INTR?CAT3
+  +--> ?PR?DELAY?CAT3
+
+
+
+SYMBOL TABLE OF MODULE:  .\Objects\NeelCAT3 (CAT3)
+
+  VALUE           TYPE          NAME
+  ----------------------------------
+
+  -------         MODULE        CAT3
+  C:0000H         SYMBOL        _ICE_DUMMY_
+  D:0090H         PUBLIC        P1
+  D:00A0H         PUBLIC        P2
+  C:0917H         PUBLIC        counter
+  B:00A0H.7       PUBLIC        row1
+  C:0A0AH         PUBLIC        delay
+  C:098AH         PUBLIC        main
+  D:0008H         PUBLIC        mode
+  C:0A58H         PUBLIC        pattern1
+  C:0A97H         PUBLIC        pattern2
+  C:0A34H         PUBLIC        intr
+  B:00A0H.3       PUBLIC        column1
+  C:0A7AH         PUBLIC        delay2
+  C:09D0H         PUBLIC        seq
+  D:000AH         PUBLIC        num
+  B:0090H.1       PUBLIC        led0
+  B:0090H.2       PUBLIC        led1
+  B:0090H.3       PUBLIC        led2
+  B:0090H.4       PUBLIC        led3
+  C:0AB3H         PUBLIC        keypress
+  -------         PROC          DELAY2
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  08/27/2026  12:11:38  PAGE 3
+
+
+  -------         DO            
+  D:0006H         SYMBOL        i
+  D:0004H         SYMBOL        j
+  -------         ENDDO         
+  C:0A7AH         LINE#         22
+  C:0A7AH         LINE#         25
+  C:0A7DH         LINE#         26
+  C:0A80H         LINE#         27
+  C:0A8BH         LINE#         28
+  C:0A96H         LINE#         29
+  -------         ENDPROC       DELAY2
+  -------         PROC          KEYPRESS
+  C:0AB3H         LINE#         31
+  C:0AB3H         LINE#         32
+  C:0AB5H         LINE#         33
+  C:0AB8H         LINE#         34
+  C:0ABBH         LINE#         36
+  C:0ABBH         LINE#         37
+  C:0ABEH         LINE#         38
+  C:0AC1H         LINE#         39
+  C:0AC6H         LINE#         40
+  C:0AC6H         LINE#         41
+  C:0AC9H         LINE#         42
+  -------         ENDPROC       KEYPRESS
+  -------         PROC          INTR
+  C:0A34H         LINE#         44
+  C:0A34H         LINE#         45
+  C:0A3BH         LINE#         46
+  C:0A4FH         LINE#         47
+  C:0A54H         LINE#         48
+  C:0A54H         LINE#         49
+  C:0A57H         LINE#         50
+  -------         ENDPROC       INTR
+  -------         PROC          L?0054
+  -------         ENDPROC       L?0054
+  -------         PROC          DELAY
+  -------         DO            
+  D:0002H         SYMBOL        i
+  D:0082H         SYMBOL        j
+  -------         ENDDO         
+  C:0A0AH         LINE#         52
+  C:0A0AH         LINE#         53
+  C:0A0AH         LINE#         57
+  C:0A0DH         LINE#         58
+  C:0A10H         LINE#         59
+  C:0A17H         LINE#         60
+  C:0A1CH         LINE#         61
+  C:0A1CH         LINE#         62
+  C:0A25H         LINE#         63
+  C:0A30H         LINE#         64
+  C:0A33H         LINE#         65
+  -------         ENDPROC       DELAY
+  -------         PROC          COUNTER
+  -------         DO            
+  D:0002H         SYMBOL        a
+  -------         ENDDO         
+  C:0917H         LINE#         67
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  08/27/2026  12:11:38  PAGE 4
+
+
+  C:0917H         LINE#         71
+  C:091EH         LINE#         73
+  C:0922H         LINE#         75
+  C:0932H         LINE#         76
+  C:0941H         LINE#         78
+  C:094EH         LINE#         79
+  C:095DH         LINE#         81
+  C:096AH         LINE#         82
+  C:0979H         LINE#         84
+  C:0986H         LINE#         86
+  C:0989H         LINE#         88
+  -------         ENDPROC       COUNTER
+  -------         PROC          SEQ
+  C:09D0H         LINE#         90
+  C:09D0H         LINE#         92
+  C:09D7H         LINE#         94
+  C:09D9H         LINE#         95
+  C:09D9H         LINE#         96
+  C:09D9H         LINE#         97
+  C:09D9H         LINE#         98
+  C:09E0H         LINE#         100
+  C:09E2H         LINE#         101
+  C:09E4H         LINE#         102
+  C:09EBH         LINE#         104
+  C:09EDH         LINE#         105
+  C:09EFH         LINE#         106
+  C:09F6H         LINE#         108
+  C:09F8H         LINE#         109
+  C:09FAH         LINE#         110
+  C:0A01H         LINE#         112
+  C:0A03H         LINE#         113
+  -------         ENDPROC       SEQ
+  -------         PROC          PATTERN1
+  C:0A58H         LINE#         116
+  C:0A58H         LINE#         118
+  C:0A5FH         LINE#         120
+  C:0A61H         LINE#         121
+  C:0A63H         LINE#         122
+  C:0A65H         LINE#         123
+  C:0A67H         LINE#         125
+  C:0A6EH         LINE#         127
+  C:0A70H         LINE#         128
+  C:0A72H         LINE#         129
+  C:0A74H         LINE#         130
+  C:0A76H         LINE#         132
+  C:0A79H         LINE#         133
+  -------         ENDPROC       PATTERN1
+  -------         PROC          PATTERN2
+  C:0A97H         LINE#         135
+  C:0A97H         LINE#         137
+  C:0A9EH         LINE#         139
+  C:0AA0H         LINE#         140
+  C:0AA2H         LINE#         141
+  C:0AA4H         LINE#         142
+  C:0AA6H         LINE#         144
+  C:0AADH         LINE#         146
+  C:0AAFH         LINE#         147
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  08/27/2026  12:11:38  PAGE 5
+
+
+  C:0AAFH         LINE#         148
+  C:0AAFH         LINE#         149
+  C:0AAFH         LINE#         151
+  C:0AB2H         LINE#         152
+  -------         ENDPROC       PATTERN2
+  -------         PROC          MAIN
+  C:098AH         LINE#         154
+  C:098AH         LINE#         156
+  C:098AH         LINE#         158
+  C:0991H         LINE#         159
+  C:0991H         LINE#         161
+  C:09A4H         LINE#         163
+  C:09A4H         LINE#         164
+  C:09A7H         LINE#         165
+  C:09A9H         LINE#         167
+  C:09A9H         LINE#         168
+  C:09B1H         LINE#         169
+  C:09C1H         LINE#         170
+  C:09C4H         LINE#         171
+  C:09C6H         LINE#         173
+  C:09C6H         LINE#         174
+  C:09C9H         LINE#         175
+  C:09CBH         LINE#         177
+  C:09CBH         LINE#         178
+  C:09CEH         LINE#         179
+  -------         ENDPROC       MAIN
+  -------         ENDMOD        CAT3
+
+  -------         MODULE        ?C?SIDIV
+  C:088CH         PUBLIC        ?C?SIDIV
+  -------         ENDMOD        ?C?SIDIV
+
+  -------         MODULE        ?C?UIDIV
+  C:08C2H         PUBLIC        ?C?UIDIV
+  -------         ENDMOD        ?C?UIDIV
+
+******************************************************************************
+* RESTRICTED VERSION WITH 0800H BYTE CODE SIZE LIMIT; USED: 01BBH BYTE (21%) *
+******************************************************************************
+
+Program Size: data=13.0 xdata=0 code=726
+LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)

@@ -1,0 +1,3 @@
+".\Objects\cat3.obj" 
+TO ".\Objects\NeelCAT3" 
+PRINT(".\Listings\NeelCAT3.m51")
