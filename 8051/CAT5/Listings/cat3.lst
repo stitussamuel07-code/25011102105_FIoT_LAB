@@ -1,0 +1,644 @@
+C51 COMPILER V9.60.7.0   CAT3                                                              08/27/2026 12:11:38 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE CAT3
+OBJECT MODULE PLACED IN .\Objects\cat3.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE cat3.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND CODE PRINT(.\Listings
+                    -\cat3.lst) TABS(2) OBJECT(.\Objects\cat3.obj)
+
+line level    source
+
+   1          #include <reg51.h>
+   2          
+   3          sbit row1 = P2^7;
+   4          sbit row2 = P2^6;
+   5          sbit row3 = P2^5;
+   6          sbit row4 = P2^4;
+   7          
+   8          sbit column1 = P2^3;
+   9          sbit column2 = P2^2;
+  10          sbit column3 = P2^1;
+  11          sbit column4 = P2^0;
+  12          
+  13          sbit led0 = P1^1;
+  14          sbit led1 = P1^2;
+  15          sbit led2 = P1^3;
+  16          sbit led3 = P1^4;
+  17          
+  18          int mode;
+  19          mode = 0;
+  20          int num = 0;
+  21          
+  22          void delay2(){
+  23   1        int i;
+  24   1        int j;
+  25   1        for(i = 0; i < 2; i++){
+  26   2          for(j = 0; j < 127; j++){
+  27   3          } 
+  28   2        }
+  29   1      }
+  30          
+  31          int keypress(){
+  32   1        row1 = 0;
+  33   1        if(column1 == 0){
+  34   2          delay2();
+  35   2          
+  36   2        }
+  37   1        if(column1 == 0){
+  38   2          while(column1 == 0);
+  39   2          return 1;
+  40   2        }
+  41   1        return 0;
+  42   1      }
+  43          
+  44          int intr(){
+  45   1          if(keypress()){
+  46   2            mode =(mode+1)%4;
+  47   2            return 1;
+  48   2          } 
+  49   1          return 0;
+  50   1      }
+  51          
+  52          int delay()
+  53          {
+  54   1          int i;
+C51 COMPILER V9.60.7.0   CAT3                                                              08/27/2026 12:11:38 PAGE 2   
+
+  55   1          int j;
+  56   1      
+  57   1          for(i = 0; i < 250; i++){
+  58   2            for(j = 0; j < 250; j++){
+  59   3              if(intr()){
+  60   4                return 1;
+  61   4              }
+  62   3            }
+  63   2          }
+  64   1          return 0;
+  65   1      }
+  66          
+  67          void counter() {
+  68   1      
+  69   1          int a;
+  70   1      
+  71   1          if(intr()) return;
+  72   1      
+  73   1          a = num;
+  74   1      
+  75   1          led0 = a % 2;
+  76   1          a /= 2;
+  77   1      
+  78   1          led1 = a % 2;
+  79   1          a /= 2;
+  80   1      
+  81   1          led2 = a % 2;
+  82   1          a /= 2;
+  83   1      
+  84   1          led3 = a % 2;
+  85   1      
+  86   1          if(delay())
+  87   1              return;
+  88   1      }
+  89          
+  90          void seq() {
+  91   1      
+  92   1          if(intr()) return;
+  93   1      
+  94   1          led0 = 1;
+  95   1          led1 = 0;
+  96   1          led2 = 0;
+  97   1          led3 = 0;
+  98   1          if(delay()) return;
+  99   1      
+ 100   1          led0 = 0;
+ 101   1          led1 = 1;
+ 102   1          if(delay()) return;
+ 103   1      
+ 104   1          led1 = 0;
+ 105   1          led2 = 1;
+ 106   1          if(delay()) return;
+ 107   1      
+ 108   1          led2 = 0;
+ 109   1          led3 = 1;
+ 110   1          if(delay()) return;
+ 111   1      
+ 112   1          led3 = 0;
+ 113   1      }
+ 114          
+ 115          
+ 116          void pattern1() {
+C51 COMPILER V9.60.7.0   CAT3                                                              08/27/2026 12:11:38 PAGE 3   
+
+ 117   1      
+ 118   1          if(intr()) return;
+ 119   1      
+ 120   1          led0 = 1;
+ 121   1          led1 = 0;
+ 122   1          led2 = 1;
+ 123   1          led3 = 0;
+ 124   1      
+ 125   1          if(delay()) return;
+ 126   1      
+ 127   1          led0 = 0;
+ 128   1          led1 = 1;
+ 129   1          led2 = 0;
+ 130   1          led3 = 1;
+ 131   1      
+ 132   1          if(delay()) return;
+ 133   1      }
+ 134          
+ 135          void pattern2() {
+ 136   1      
+ 137   1          if(intr()) return;
+ 138   1      
+ 139   1          led0 = 1;
+ 140   1          led1 = 1;
+ 141   1          led2 = 1;
+ 142   1          led3 = 1;
+ 143   1      
+ 144   1          if(delay()) return;
+ 145   1      
+ 146   1          led0 = 0;
+ 147   1          led1 = 0;
+ 148   1          led2 = 0;
+ 149   1          led3 = 0;
+ 150   1      
+ 151   1          if(delay()) return;
+ 152   1      }
+ 153          
+ 154          void main() {
+ 155   1      
+ 156   1          while(1) {
+ 157   2      
+ 158   2              if(intr())
+ 159   2                  continue;
+ 160   2      
+ 161   2              switch(mode) {
+ 162   3      
+ 163   3                  case 0:
+ 164   3                      seq();
+ 165   3                      break;
+ 166   3      
+ 167   3                  case 1:
+ 168   3                      num++;
+ 169   3                     if(num>15){num=0;}
+ 170   3                      counter();
+ 171   3                      break;
+ 172   3      
+ 173   3                  case 2:
+ 174   3                      pattern1();
+ 175   3                      break;
+ 176   3      
+ 177   3                  case 3:
+ 178   3                      pattern2();
+C51 COMPILER V9.60.7.0   CAT3                                                              08/27/2026 12:11:38 PAGE 4   
+
+ 179   3                      break;
+ 180   3              }
+ 181   2          }
+ 182   1      }
+C51 COMPILER V9.60.7.0   CAT3                                                              08/27/2026 12:11:38 PAGE 5   
+
+ASSEMBLY LISTING OF GENERATED OBJECT CODE
+
+
+             ; FUNCTION delay2 (BEGIN)
+                                           ; SOURCE LINE # 22
+                                           ; SOURCE LINE # 25
+;---- Variable 'i' assigned to Register 'R6/R7' ----
+0000 E4                CLR     A
+0001 FF                MOV     R7,A
+0002 FE                MOV     R6,A
+0003         ?C0001:
+                                           ; SOURCE LINE # 26
+;---- Variable 'j' assigned to Register 'R4/R5' ----
+0003 E4                CLR     A
+0004 FD                MOV     R5,A
+0005 FC                MOV     R4,A
+0006         ?C0004:
+                                           ; SOURCE LINE # 27
+0006 0D                INC     R5
+0007 BD0001            CJNE    R5,#00H,?C0050
+000A 0C                INC     R4
+000B         ?C0050:
+000B ED                MOV     A,R5
+000C 647F              XRL     A,#07FH
+000E 4C                ORL     A,R4
+000F 70F5              JNZ     ?C0004
+                                           ; SOURCE LINE # 28
+0011         ?C0003:
+0011 0F                INC     R7
+0012 BF0001            CJNE    R7,#00H,?C0051
+0015 0E                INC     R6
+0016         ?C0051:
+0016 EF                MOV     A,R7
+0017 6402              XRL     A,#02H
+0019 4E                ORL     A,R6
+001A 70E7              JNZ     ?C0001
+                                           ; SOURCE LINE # 29
+001C         ?C0007:
+001C 22                RET     
+             ; FUNCTION delay2 (END)
+
+             ; FUNCTION keypress (BEGIN)
+                                           ; SOURCE LINE # 31
+                                           ; SOURCE LINE # 32
+0000 C2A7              CLR     row1
+                                           ; SOURCE LINE # 33
+0002 20A303            JB      column1,?C0008
+                                           ; SOURCE LINE # 34
+0005 120000      R     LCALL   delay2
+                                           ; SOURCE LINE # 36
+0008         ?C0008:
+                                           ; SOURCE LINE # 37
+0008 20A308            JB      column1,?C0009
+000B         ?C0010:
+                                           ; SOURCE LINE # 38
+000B 30A3FD            JNB     column1,?C0010
+                                           ; SOURCE LINE # 39
+000E 7E00              MOV     R6,#00H
+0010 7F01              MOV     R7,#01H
+0012 22                RET     
+                                           ; SOURCE LINE # 40
+0013         ?C0009:
+C51 COMPILER V9.60.7.0   CAT3                                                              08/27/2026 12:11:38 PAGE 6   
+
+                                           ; SOURCE LINE # 41
+0013 E4                CLR     A
+0014 FE                MOV     R6,A
+0015 FF                MOV     R7,A
+                                           ; SOURCE LINE # 42
+0016         ?C0012:
+0016 22                RET     
+             ; FUNCTION keypress (END)
+
+             ; FUNCTION intr (BEGIN)
+                                           ; SOURCE LINE # 44
+                                           ; SOURCE LINE # 45
+0000 120000      R     LCALL   keypress
+0003 EF                MOV     A,R7
+0004 4E                ORL     A,R6
+0005 6019              JZ      ?C0013
+                                           ; SOURCE LINE # 46
+0007 E500        R     MOV     A,mode+01H
+0009 2401              ADD     A,#01H
+000B FF                MOV     R7,A
+000C E4                CLR     A
+000D 3500        R     ADDC    A,mode
+000F FE                MOV     R6,A
+0010 7C00              MOV     R4,#00H
+0012 7D04              MOV     R5,#04H
+0014 120000      E     LCALL   ?C?SIDIV
+0017 8C00        R     MOV     mode,R4
+0019 8D00        R     MOV     mode+01H,R5
+                                           ; SOURCE LINE # 47
+001B 7E00              MOV     R6,#00H
+001D 7F01              MOV     R7,#01H
+001F 22                RET     
+                                           ; SOURCE LINE # 48
+0020         ?C0013:
+                                           ; SOURCE LINE # 49
+0020 E4                CLR     A
+0021 FE                MOV     R6,A
+0022 FF                MOV     R7,A
+                                           ; SOURCE LINE # 50
+0023         ?C0014:
+0023 22                RET     
+             ; FUNCTION intr (END)
+
+             ; FUNCTION L?0054 (BEGIN)
+0000 C292              CLR     led1
+0002 C293              CLR     led2
+0004 C294              CLR     led3
+             ; FUNCTION delay (BEGIN)
+                                           ; SOURCE LINE # 52
+                                           ; SOURCE LINE # 53
+                                           ; SOURCE LINE # 57
+;---- Variable 'i' assigned to Register 'R2/R3' ----
+0006 E4                CLR     A
+0007 FB                MOV     R3,A
+0008 FA                MOV     R2,A
+0009         ?C0015:
+                                           ; SOURCE LINE # 58
+;---- Variable 'j' assigned to Register 'DPTR' ----
+0009 900000            MOV     DPTR,#00H
+000C         ?C0018:
+                                           ; SOURCE LINE # 59
+000C 120000      R     LCALL   intr
+C51 COMPILER V9.60.7.0   CAT3                                                              08/27/2026 12:11:38 PAGE 7   
+
+000F EF                MOV     A,R7
+0010 4E                ORL     A,R6
+0011 6005              JZ      ?C0020
+                                           ; SOURCE LINE # 60
+0013 7E00              MOV     R6,#00H
+0015 7F01              MOV     R7,#01H
+0017 22                RET     
+                                           ; SOURCE LINE # 61
+                                           ; SOURCE LINE # 62
+0018         ?C0020:
+0018 A3                INC     DPTR
+0019 E582              MOV     A,DPL
+001B 64FA              XRL     A,#0FAH
+001D 4583              ORL     A,DPH
+001F 70EB              JNZ     ?C0018
+                                           ; SOURCE LINE # 63
+0021         ?C0017:
+0021 0B                INC     R3
+0022 BB0001            CJNE    R3,#00H,?C0052
+0025 0A                INC     R2
+0026         ?C0052:
+0026 EB                MOV     A,R3
+0027 64FA              XRL     A,#0FAH
+0029 4A                ORL     A,R2
+002A 70DD              JNZ     ?C0015
+002C         ?C0016:
+                                           ; SOURCE LINE # 64
+002C E4                CLR     A
+002D FE                MOV     R6,A
+002E FF                MOV     R7,A
+                                           ; SOURCE LINE # 65
+002F         ?C0022:
+002F 22                RET     
+             ; FUNCTION delay (END)
+
+             ; FUNCTION counter (BEGIN)
+                                           ; SOURCE LINE # 67
+                                           ; SOURCE LINE # 71
+0000 120000      R     LCALL   intr
+0003 EF                MOV     A,R7
+0004 4E                ORL     A,R6
+0005 706B              JNZ     ?C0024
+                                           ; SOURCE LINE # 73
+;---- Variable 'a' assigned to Register 'R2/R3' ----
+0007 AB00        R     MOV     R3,num+01H
+0009 AA00        R     MOV     R2,num
+                                           ; SOURCE LINE # 75
+000B FC                MOV     R4,A
+000C 7D02              MOV     R5,#02H
+000E AF03              MOV     R7,AR3
+0010 AE02              MOV     R6,AR2
+0012 120000      E     LCALL   ?C?SIDIV
+0015 EC                MOV     A,R4
+0016 4D                ORL     A,R5
+0017 24FF              ADD     A,#0FFH
+0019 9291              MOV     led0,C
+                                           ; SOURCE LINE # 76
+001B 7C00              MOV     R4,#00H
+001D 7D02              MOV     R5,#02H
+001F AF03              MOV     R7,AR3
+0021 AE02              MOV     R6,AR2
+0023 120000      E     LCALL   ?C?SIDIV
+C51 COMPILER V9.60.7.0   CAT3                                                              08/27/2026 12:11:38 PAGE 8   
+
+0026 AA06              MOV     R2,AR6
+0028 AB07              MOV     R3,AR7
+                                           ; SOURCE LINE # 78
+002A 7C00              MOV     R4,#00H
+002C 7D02              MOV     R5,#02H
+002E 120000      E     LCALL   ?C?SIDIV
+0031 EC                MOV     A,R4
+0032 4D                ORL     A,R5
+0033 24FF              ADD     A,#0FFH
+0035 9292              MOV     led1,C
+                                           ; SOURCE LINE # 79
+0037 7C00              MOV     R4,#00H
+0039 7D02              MOV     R5,#02H
+003B AF03              MOV     R7,AR3
+003D AE02              MOV     R6,AR2
+003F 120000      E     LCALL   ?C?SIDIV
+0042 AA06              MOV     R2,AR6
+0044 AB07              MOV     R3,AR7
+                                           ; SOURCE LINE # 81
+0046 7C00              MOV     R4,#00H
+0048 7D02              MOV     R5,#02H
+004A 120000      E     LCALL   ?C?SIDIV
+004D EC                MOV     A,R4
+004E 4D                ORL     A,R5
+004F 24FF              ADD     A,#0FFH
+0051 9293              MOV     led2,C
+                                           ; SOURCE LINE # 82
+0053 7C00              MOV     R4,#00H
+0055 7D02              MOV     R5,#02H
+0057 AF03              MOV     R7,AR3
+0059 AE02              MOV     R6,AR2
+005B 120000      E     LCALL   ?C?SIDIV
+005E AA06              MOV     R2,AR6
+0060 AB07              MOV     R3,AR7
+                                           ; SOURCE LINE # 84
+0062 7C00              MOV     R4,#00H
+0064 7D02              MOV     R5,#02H
+0066 120000      E     LCALL   ?C?SIDIV
+0069 EC                MOV     A,R4
+006A 4D                ORL     A,R5
+006B 24FF              ADD     A,#0FFH
+006D 9294              MOV     led3,C
+                                           ; SOURCE LINE # 86
+006F 120000      R     LCALL   delay
+                                           ; SOURCE LINE # 88
+0072         ?C0024:
+0072 22                RET     
+             ; FUNCTION counter (END)
+
+             ; FUNCTION seq (BEGIN)
+                                           ; SOURCE LINE # 90
+                                           ; SOURCE LINE # 92
+0000 120000      R     LCALL   intr
+0003 EF                MOV     A,R7
+0004 4E                ORL     A,R6
+0005 702C              JNZ     ?C0027
+                                           ; SOURCE LINE # 94
+0007 D291              SETB    led0
+                                           ; SOURCE LINE # 95
+                                           ; SOURCE LINE # 96
+                                           ; SOURCE LINE # 97
+                                           ; SOURCE LINE # 98
+C51 COMPILER V9.60.7.0   CAT3                                                              08/27/2026 12:11:38 PAGE 9   
+
+0009 120000      R     LCALL   L?0054
+000C EF                MOV     A,R7
+000D 4E                ORL     A,R6
+000E 7023              JNZ     ?C0027
+                                           ; SOURCE LINE # 100
+0010 C291              CLR     led0
+                                           ; SOURCE LINE # 101
+0012 D292              SETB    led1
+                                           ; SOURCE LINE # 102
+0014 120000      R     LCALL   delay
+0017 EF                MOV     A,R7
+0018 4E                ORL     A,R6
+0019 7018              JNZ     ?C0027
+                                           ; SOURCE LINE # 104
+001B C292              CLR     led1
+                                           ; SOURCE LINE # 105
+001D D293              SETB    led2
+                                           ; SOURCE LINE # 106
+001F 120000      R     LCALL   delay
+0022 EF                MOV     A,R7
+0023 4E                ORL     A,R6
+0024 700D              JNZ     ?C0027
+                                           ; SOURCE LINE # 108
+0026 C293              CLR     led2
+                                           ; SOURCE LINE # 109
+0028 D294              SETB    led3
+                                           ; SOURCE LINE # 110
+002A 120000      R     LCALL   delay
+002D EF                MOV     A,R7
+002E 4E                ORL     A,R6
+002F 7002              JNZ     ?C0027
+                                           ; SOURCE LINE # 112
+0031 C294              CLR     led3
+                                           ; SOURCE LINE # 113
+0033         ?C0027:
+0033 22                RET     
+             ; FUNCTION seq (END)
+
+             ; FUNCTION pattern1 (BEGIN)
+                                           ; SOURCE LINE # 116
+                                           ; SOURCE LINE # 118
+0000 120000      R     LCALL   intr
+0003 EF                MOV     A,R7
+0004 4E                ORL     A,R6
+0005 701A              JNZ     ?C0033
+                                           ; SOURCE LINE # 120
+0007 D291              SETB    led0
+                                           ; SOURCE LINE # 121
+0009 C292              CLR     led1
+                                           ; SOURCE LINE # 122
+000B D293              SETB    led2
+                                           ; SOURCE LINE # 123
+000D C294              CLR     led3
+                                           ; SOURCE LINE # 125
+000F 120000      R     LCALL   delay
+0012 EF                MOV     A,R7
+0013 4E                ORL     A,R6
+0014 700B              JNZ     ?C0033
+                                           ; SOURCE LINE # 127
+0016 C291              CLR     led0
+                                           ; SOURCE LINE # 128
+0018 D292              SETB    led1
+C51 COMPILER V9.60.7.0   CAT3                                                              08/27/2026 12:11:38 PAGE 10  
+
+                                           ; SOURCE LINE # 129
+001A C293              CLR     led2
+                                           ; SOURCE LINE # 130
+001C D294              SETB    led3
+                                           ; SOURCE LINE # 132
+001E 120000      R     LCALL   delay
+                                           ; SOURCE LINE # 133
+0021         ?C0033:
+0021 22                RET     
+             ; FUNCTION pattern1 (END)
+
+             ; FUNCTION pattern2 (BEGIN)
+                                           ; SOURCE LINE # 135
+                                           ; SOURCE LINE # 137
+0000 120000      R     LCALL   intr
+0003 EF                MOV     A,R7
+0004 4E                ORL     A,R6
+0005 7014              JNZ     ?C0037
+                                           ; SOURCE LINE # 139
+0007 D291              SETB    led0
+                                           ; SOURCE LINE # 140
+0009 D292              SETB    led1
+                                           ; SOURCE LINE # 141
+000B D293              SETB    led2
+                                           ; SOURCE LINE # 142
+000D D294              SETB    led3
+                                           ; SOURCE LINE # 144
+000F 120000      R     LCALL   delay
+0012 EF                MOV     A,R7
+0013 4E                ORL     A,R6
+0014 7005              JNZ     ?C0037
+                                           ; SOURCE LINE # 146
+0016 C291              CLR     led0
+                                           ; SOURCE LINE # 147
+                                           ; SOURCE LINE # 148
+                                           ; SOURCE LINE # 149
+                                           ; SOURCE LINE # 151
+0018 120000      R     LCALL   L?0054
+                                           ; SOURCE LINE # 152
+001B         ?C0037:
+001B 22                RET     
+             ; FUNCTION pattern2 (END)
+
+             ; FUNCTION main (BEGIN)
+                                           ; SOURCE LINE # 154
+0000         ?C0040:
+                                           ; SOURCE LINE # 156
+                                           ; SOURCE LINE # 158
+0000 120000      R     LCALL   intr
+0003 EF                MOV     A,R7
+0004 4E                ORL     A,R6
+0005 70F9              JNZ     ?C0040
+                                           ; SOURCE LINE # 159
+                                           ; SOURCE LINE # 161
+0007 E500        R     MOV     A,mode
+0009 70F5              JNZ     ?C0040
+000B E500        R     MOV     A,mode+01H
+000D 14                DEC     A
+000E 600F              JZ      ?C0045
+0010 14                DEC     A
+0011 6029              JZ      ?C0047
+0013 14                DEC     A
+C51 COMPILER V9.60.7.0   CAT3                                                              08/27/2026 12:11:38 PAGE 11  
+
+0014 602B              JZ      ?C0048
+0016 2403              ADD     A,#03H
+0018 70E6              JNZ     ?C0040
+                                           ; SOURCE LINE # 163
+001A         ?C0044:
+                                           ; SOURCE LINE # 164
+001A 120000      R     LCALL   seq
+                                           ; SOURCE LINE # 165
+001D 80E1              SJMP    ?C0040
+                                           ; SOURCE LINE # 167
+001F         ?C0045:
+                                           ; SOURCE LINE # 168
+001F 0500        R     INC     num+01H
+0021 E500        R     MOV     A,num+01H
+0023 7002              JNZ     ?C0053
+0025 0500        R     INC     num
+0027         ?C0053:
+                                           ; SOURCE LINE # 169
+0027 D3                SETB    C
+0028 940F              SUBB    A,#0FH
+002A E500        R     MOV     A,num
+002C 6480              XRL     A,#080H
+002E 9480              SUBB    A,#080H
+0030 4005              JC      ?C0046
+0032 E4                CLR     A
+0033 F500        R     MOV     num,A
+0035 F500        R     MOV     num+01H,A
+0037         ?C0046:
+                                           ; SOURCE LINE # 170
+0037 120000      R     LCALL   counter
+                                           ; SOURCE LINE # 171
+003A 80C4              SJMP    ?C0040
+                                           ; SOURCE LINE # 173
+003C         ?C0047:
+                                           ; SOURCE LINE # 174
+003C 120000      R     LCALL   pattern1
+                                           ; SOURCE LINE # 175
+003F 80BF              SJMP    ?C0040
+                                           ; SOURCE LINE # 177
+0041         ?C0048:
+                                           ; SOURCE LINE # 178
+0041 120000      R     LCALL   pattern2
+                                           ; SOURCE LINE # 179
+0044 80BA              SJMP    ?C0040
+             ; FUNCTION main (END)
+
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    435    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      4    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

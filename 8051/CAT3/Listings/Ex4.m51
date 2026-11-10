@@ -1,0 +1,137 @@
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                    09/01/2026  13:28:19  PAGE 1
+
+
+BL51 BANKED LINKER/LOCATER V6.22.4.0, INVOKED BY:
+C:\KEIL_V5\C51\BIN\BL51.EXE .\Objects\Ex4.obj TO .\Objects\Ex4 PRINT (.\Listings\Ex4.m51) RAMSIZE (256)
+
+
+MEMORY MODEL: SMALL
+
+
+INPUT MODULES INCLUDED:
+  .\Objects\Ex4.obj (EX4)
+  C:\KEIL_V5\C51\LIB\C51S.LIB (?C_STARTUP)
+
+
+LINK MAP OF MODULE:  .\Objects\Ex4 (EX4)
+
+
+            TYPE    BASE      LENGTH    RELOCATION   SEGMENT NAME
+            -----------------------------------------------------
+
+            * * * * * * *   D A T A   M E M O R Y   * * * * * * *
+            REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
+            IDATA   0008H     0001H     UNIT         ?STACK
+
+            * * * * * * *   C O D E   M E M O R Y   * * * * * * *
+            CODE    0000H     0003H     ABSOLUTE     
+                    0003H     07FDH                  *** GAP ***
+            CODE    0800H     00E8H     UNIT         ?PR?MAIN?EX4
+            CODE    08E8H     0021H     UNIT         ?PR?DELAY?EX4
+            CODE    0909H     0010H     UNIT         ?CO?EX4
+            CODE    0919H     000CH     UNIT         ?C_C51STARTUP
+
+
+
+OVERLAY MAP OF MODULE:   .\Objects\Ex4 (EX4)
+
+
+SEGMENT
+  +--> CALLED SEGMENT
+---------------------
+?C_C51STARTUP
+  +--> ?PR?MAIN?EX4
+
+?PR?MAIN?EX4
+  +--> ?CO?EX4
+  +--> ?PR?DELAY?EX4
+
+
+
+SYMBOL TABLE OF MODULE:  .\Objects\Ex4 (EX4)
+
+  VALUE           TYPE          NAME
+  ----------------------------------
+
+  -------         MODULE        EX4
+  C:0000H         SYMBOL        _ICE_DUMMY_
+  D:0080H         PUBLIC        P0
+  D:00A0H         PUBLIC        P2
+  B:00A0H.4       PUBLIC        R1
+  B:00A0H.5       PUBLIC        R2
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  09/01/2026  13:28:19  PAGE 2
+
+
+  B:00A0H.6       PUBLIC        R3
+  B:00A0H.7       PUBLIC        R4
+  C:08ECH         PUBLIC        delay
+  C:0800H         PUBLIC        main
+  C:0909H         PUBLIC        seg
+  B:00A0H.0       PUBLIC        C1
+  B:00A0H.1       PUBLIC        C2
+  B:00A0H.2       PUBLIC        C3
+  B:00A0H.3       PUBLIC        C4
+  C:08E8H         SYMBOL        L?0062
+  -------         PROC          L?0061
+  -------         ENDPROC       L?0061
+  C:08E8H         SYMBOL        L?0062
+  -------         PROC          DELAY
+  -------         DO            
+  D:0006H         SYMBOL        i
+  D:0004H         SYMBOL        j
+  -------         ENDDO         
+  C:08ECH         LINE#         33
+  C:08ECH         LINE#         34
+  C:08ECH         LINE#         37
+  C:08EFH         LINE#         38
+  C:0908H         LINE#         39
+  -------         ENDPROC       DELAY
+  -------         PROC          MAIN
+  C:0800H         LINE#         41
+  C:0800H         LINE#         42
+  C:0800H         LINE#         43
+  C:0800H         LINE#         44
+  C:0800H         LINE#         47
+  C:0802H         LINE#         48
+  C:0804H         LINE#         49
+  C:0806H         LINE#         50
+  C:0808H         LINE#         52
+  C:0814H         LINE#         53
+  C:0820H         LINE#         54
+  C:082CH         LINE#         55
+  C:0838H         LINE#         60
+  C:083AH         LINE#         61
+  C:083CH         LINE#         62
+  C:083EH         LINE#         63
+  C:0840H         LINE#         65
+  C:084CH         LINE#         66
+  C:0858H         LINE#         67
+  C:0864H         LINE#         68
+  C:0870H         LINE#         73
+  C:0872H         LINE#         74
+  C:0874H         LINE#         75
+  C:0876H         LINE#         76
+  C:0878H         LINE#         78
+  C:0884H         LINE#         79
+  C:0890H         LINE#         80
+  C:089CH         LINE#         81
+  C:08A8H         LINE#         86
+  C:08AAH         LINE#         87
+  C:08ACH         LINE#         88
+  C:08AEH         LINE#         89
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  09/01/2026  13:28:19  PAGE 3
+
+
+  C:08B0H         LINE#         91
+  C:08BCH         LINE#         92
+  C:08C8H         LINE#         93
+  C:08D4H         LINE#         94
+  -------         ENDPROC       MAIN
+  -------         ENDMOD        EX4
+
+******************************************************************************
+* RESTRICTED VERSION WITH 0800H BYTE CODE SIZE LIMIT; USED: 0119H BYTE (13%) *
+******************************************************************************
+
+Program Size: data=9.0 xdata=0 code=296
+LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)
