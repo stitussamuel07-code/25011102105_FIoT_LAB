@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 
 # ===== Keil uVision (8051 / C51) =====
 
@@ -55,3 +56,34 @@ RemoteSystemsTempFiles/
 
 .DS_Store
 __pycache__/
+=======
+# macOS / editor junk
+.DS_Store
+
+# Keil uVision: IDE user settings and generated build output
+# (the compiled .hex is kept in each experiment folder)
+*.uvgui*
+*.uvopt
+*.bak
+**/Objects/*
+!**/Objects/*.hex
+Listings/
+*.obj
+*.lnp
+*.lst
+*.m51
+*.build_log.htm
+*.crf
+*.d
+*.o
+*.axf
+*.map
+
+# STM32 / Keil MDK / CubeIDE build output
+Debug/
+Release/
+RTE/
+*.dep
+*.elf
+*.htm
+>>>>>>> abe7737 (8051 correction)

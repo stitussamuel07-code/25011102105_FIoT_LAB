@@ -1,0 +1,597 @@
+/* USER CODE BEGIN Header */
+/**
+  ******************************************************************************
+  * @file           : main.c
+  * @brief          : Main program body
+  ******************************************************************************
+  * @attention
+  *
+  * Copyright (c) 2026 STMicroelectronics.
+  * All rights reserved.
+  *
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
+  *
+  ******************************************************************************
+  */
+/* USER CODE END Header */
+/* Includes ------------------------------------------------------------------*/
+#include "main.h"
+
+/* Private includes ----------------------------------------------------------*/
+/* USER CODE BEGIN Includes */
+#include <string.h>
+#include <stdio.h>
+/* USER CODE END Includes */
+
+/* Private typedef -----------------------------------------------------------*/
+/* USER CODE BEGIN PTD */
+//HTTP Server Related
+typedef enum { CLOSED, CONNECTED, DATA } connection_state;
+typedef struct {
+	volatile connection_state state;   // changed inside the UART interrupt -> volatile
+	char data[128];
+} connection;
+
+/* USER CODE END PTD */
+
+/* Private define ------------------------------------------------------------*/
+/* USER CODE BEGIN PD */
+#define WIFI_SSID "SNUC"
+#define WIFI_PASS "snu12345"
+/* USER CODE END PD */
+
+/* Private macro -------------------------------------------------------------*/
+/* USER CODE BEGIN PM */
+
+/* USER CODE END PM */
+
+/* Private variables ---------------------------------------------------------*/
+UART_HandleTypeDef huart1;
+UART_HandleTypeDef huart6;
+
+/* USER CODE BEGIN PV */
+connection connections[5];
+uint8_t byteRecieved;
+char request[128];
+char tmpbuf[256];
+volatile uint8_t wifiDisconnected = 0;   // set in interrupt, handled in main loop
+
+/* USER CODE END PV */
+
+/* Private function prototypes -----------------------------------------------*/
+void SystemClock_Config(void);
+static void MX_GPIO_Init(void);
+static void MX_USART1_UART_Init(void);
+static void MX_USART6_UART_Init(void);
+/* USER CODE BEGIN PFP */
+void onWifiDisconnect(void);
+int initServer(void);
+int sendHTML(char content[], int link);
+void handleRouting(char url[], int client);
+/* USER CODE END PFP */
+
+/* Private user code ---------------------------------------------------------*/
+/* USER CODE BEGIN 0 */
+// UART Related
+void sendUART(UART_HandleTypeDef *huart, char inp[]) {
+    HAL_UART_Transmit(huart, (uint8_t *)inp, strlen(inp), HAL_MAX_DELAY);
+    HAL_UART_Transmit(huart, (uint8_t *)"\r\n", 2, HAL_MAX_DELAY);
+}
+
+void recieveUART(UART_HandleTypeDef *huart, char *buf, int size) {
+	uint8_t c;
+	int lInd = 0;
+	while (1) {
+		if (HAL_UART_Receive(huart, &c, 1, HAL_MAX_DELAY) == HAL_OK) {
+			if ((c == '\r') || (c == '\n')) {
+				if (lInd > 0) {
+					buf[lInd] = '\0';
+					return;
+				}
+			} else if (lInd < size - 1) {
+				buf[lInd++] = c;
+			}
+		}
+	}
+}
+
+// Wifi Related
+int sendATCommand(UART_HandleTypeDef *huart, char atCMD[], char *output, int outputSize) {
+	output[0] = '\0';
+	sendUART(huart, atCMD);
+	char recBuf[64];
+	while (1) {
+		recieveUART(huart, recBuf, sizeof(recBuf));
+		strncat(output, recBuf, outputSize - strlen(output) - 1);
+		strncat(output, "\r\n", outputSize - strlen(output) - 1);
+		if (strcmp(recBuf, "OK") == 0) {
+			return 1;
+		} else if (strcmp(recBuf, "ERROR") == 0 || strcmp(recBuf, "FAIL") == 0) {
+			return 0;
+		}
+	}
+}
+
+int initWifi(UART_HandleTypeDef *huart) {
+	HAL_Delay(2000);
+	__HAL_UART_CLEAR_OREFLAG(huart);
+	char buf[32];
+	sendATCommand(huart, "ATE0", buf, sizeof(buf));
+	return sendATCommand(huart, "AT", buf, sizeof(buf));
+}
+
+int setMode(UART_HandleTypeDef *huart, char mode[], char *outBuf, int outBufSize) {
+	outBuf[0] = '\0';
+	char toSend[16];
+	if (strcmp(mode, "STATION") == 0) {
+		strcpy(toSend, "AT+CWMODE=1");
+	} else if (strcmp(mode, "AP") == 0) {
+		strcpy(toSend, "AT+CWMODE=2");
+	} else if (strcmp(mode, "STATION_AP") == 0) {
+		strcpy(toSend, "AT+CWMODE=3");
+	} else {
+		return -1;
+	}
+	return sendATCommand(huart, toSend, outBuf, outBufSize);
+}
+
+int joinAP(UART_HandleTypeDef *huart, char ssid[], char password[], char *outBuf, int outBufSize) {
+	outBuf[0] = '\0';
+	char toSend[128];
+	snprintf(toSend, sizeof(toSend), "AT+CWJAP=\"%s\",\"%s\"", ssid, password);
+	return sendATCommand(huart, toSend, outBuf, outBufSize);
+}
+
+int getMAC(UART_HandleTypeDef *huart, char *macBuf, int macBufSize) {
+	macBuf[0] = '\0';
+	char outBuf[256];
+	int ret = sendATCommand(huart, "AT+CIFSR", outBuf, sizeof(outBuf));
+	if (ret) {
+		char *mac = strstr(outBuf, "STAMAC");
+		if (mac == NULL) {
+			return 0;
+		} else {
+			mac += 8;
+			int lastInd = 0;
+			while (lastInd < macBufSize - 1 && *mac != '\0') {
+				if (*mac == '\"') break;
+				macBuf[lastInd++] = *mac;
+				mac++;
+			}
+			macBuf[lastInd] = '\0';
+		}
+	}
+	return ret;
+}
+
+int getIP(UART_HandleTypeDef *huart, char *ipBuf, int ipBufSize) {
+	ipBuf[0] = '\0';
+	char outBuf[256];
+	int ret = sendATCommand(huart, "AT+CIFSR", outBuf, sizeof(outBuf));
+	if (ret) {
+		char *ip = strstr(outBuf, "STAIP");
+		if (ip == NULL) {
+			return 0;
+		} else {
+			ip += 7;
+			int lastInd = 0;
+			while (lastInd < ipBufSize - 1 && *ip != '\0') {
+				if (*ip == '\"') break;
+				ipBuf[lastInd++] = *ip;
+				ip++;
+			}
+			ipBuf[lastInd] = '\0';
+		}
+	}
+	return ret;
+}
+
+//HTTP Server Related
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
+	if (huart->Instance == USART1) {
+		int ind = strlen(request);
+		if ((byteRecieved != '\r' && byteRecieved != '\n') && (ind < (int)sizeof(request) - 1)) {
+			request[ind++] = byteRecieved;
+			request[ind] = '\0';
+		} else {
+			if (strstr(request, "WIFI DISCONNECT") != NULL) {
+				// Don't do blocking work inside an interrupt - just flag it
+				wifiDisconnected = 1;
+			} else if (strstr(request, "CONNECT") != NULL) {
+				if (request[0] >= '0' && request[0] <= '4' && request[1] == ',')
+					connections[request[0] - '0'].state = CONNECTED;
+			} else if (strstr(request, "CLOSED") != NULL) {
+				if (request[0] >= '0' && request[0] <= '4' && request[1] == ',')
+					connections[request[0] - '0'].state = CLOSED;
+			} else {
+				char *req = strstr(request, "+IPD");
+				if (req != NULL) {
+					req += 5;
+					int link = *req - '0';
+					req += 2;
+					while (*req != ':' && *req != '\0') {
+						req++;
+					}
+					if (link >= 0 && link <= 4 && *req == ':') {
+						req += 1;
+						if (connections[link].state != DATA) {
+							strncpy(connections[link].data, req, sizeof(connections[link].data) - 1);
+							connections[link].data[sizeof(connections[link].data) - 1] = '\0';
+							connections[link].state = DATA;
+						}
+					}
+				}
+			}
+			request[0] = '\0';
+		}
+		HAL_UART_Receive_IT(&huart1, &byteRecieved, 1);
+	}
+}
+
+void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart) {
+	if (huart->Instance == USART1) {
+		request[0] = '\0';
+		HAL_UART_Receive_IT(&huart1, &byteRecieved, 1);
+	}
+}
+
+int initServer(void) {
+	char outBuf[32];
+	int r1 = sendATCommand(&huart1, "AT+CIPMUX=1", outBuf, sizeof(outBuf));
+	if (!r1) {
+		return r1;
+	}
+	r1 = sendATCommand(&huart1, "AT+CIPSERVER=1,80", outBuf, sizeof(outBuf));
+	HAL_UART_Receive_IT(&huart1, &byteRecieved, 1);
+	return r1;
+}
+
+int sendHTML(char content[], int link) {
+	char out[1024];
+	char toSend[32];
+	int len = snprintf(out, sizeof(out),
+			"HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nContent-Length: %d\r\nConnection: close\r\n\r\n%s",
+			(int)strlen(content), content);
+	if (len >= (int)sizeof(out)) len = sizeof(out) - 1;
+	snprintf(toSend, sizeof(toSend), "AT+CIPSEND=%d,%d", link, len);
+
+	HAL_UART_AbortReceive(&huart1);
+
+	int ret = sendATCommand(&huart1, toSend, tmpbuf, sizeof(tmpbuf));
+	if (ret) {
+		uint8_t c;
+		do {
+			HAL_UART_Receive(&huart1, &c, 1, HAL_MAX_DELAY);
+		} while (c != '>');
+
+		HAL_UART_Transmit(&huart1, (uint8_t *)out, len, HAL_MAX_DELAY);
+		__HAL_UART_CLEAR_OREFLAG(&huart1);
+
+		char recBuf[64];
+		do {
+			recieveUART(&huart1, recBuf, sizeof(recBuf));
+		} while (strcmp(recBuf, "SEND OK") != 0 && strcmp(recBuf, "SEND FAIL") != 0 && strcmp(recBuf, "ERROR") != 0);
+		ret = (strcmp(recBuf, "SEND OK") == 0);
+	}
+
+	snprintf(toSend, sizeof(toSend), "AT+CIPCLOSE=%d", link);
+	sendATCommand(&huart1, toSend, tmpbuf, sizeof(tmpbuf));
+	connections[link].state = CLOSED;
+
+	request[0] = '\0';
+	HAL_UART_Receive_IT(&huart1, &byteRecieved, 1);
+	return ret;
+}
+
+void handleResponse(void (*respHandler)(char *, int)) {
+	for (int i = 0; i < 5; i++) {
+		if (connections[i].state == DATA) {
+			char *url = strstr(connections[i].data, "GET ");
+			if (url != NULL) {
+				url += 4;
+				char urlRec[32];
+				int lInd = 0;
+				// stop at space, end of string, or when the buffer is full
+				while (*url != ' ' && *url != '\0' && lInd < (int)sizeof(urlRec) - 1) {
+					urlRec[lInd++] = *url++;
+				}
+				urlRec[lInd] = '\0';
+				respHandler(urlRec, i);
+			} else {
+				sendHTML("Not found", i);
+			}
+		}
+	}
+}
+
+void handleRouting(char url[], int client) {
+	char toPrint[48];
+	snprintf(toPrint, sizeof(toPrint), "%d: GET %s", client, url);
+	sendUART(&huart6, toPrint);
+	if (!strcmp(url, "/on")) {
+		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_SET);
+		sendHTML("LED ON", client);
+	} else if (!strcmp(url, "/off")) {
+		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_RESET);
+		sendHTML("LED OFF", client);
+	} else if (!strcmp(url, "/toggle")) {
+		HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_5);
+		sendHTML("LED Toggle", client);
+	} else if (!strcmp(url,"/")) {
+		sendHTML("<h1>Hello from STM32</h1>", client);
+	} else {
+		sendHTML("Page not found", client);
+	}
+}
+
+void onWifiDisconnect(void) {
+	HAL_UART_AbortReceive(&huart1);
+	sendUART(&huart6, "Wifi Disconnected. Reconnecting...");
+	for (int i = 0; i < 5; i++) {
+		connections[i].state = CLOSED;
+	}
+	char data[32];
+	data[0] = '\0';
+	while (strcmp(data, "WIFI GOT IP")) {
+		recieveUART(&huart1, data, sizeof(data));
+	}
+	sendUART(&huart6, "Connected. Reinitializing Server");
+	initServer();
+	sendUART(&huart6, "Server initialized successfully");
+}
+
+/* USER CODE END 0 */
+
+/**
+  * @brief  The application entry point.
+  * @retval int
+  */
+int main(void)
+{
+
+  /* USER CODE BEGIN 1 */
+
+  /* USER CODE END 1 */
+
+  /* MCU Configuration--------------------------------------------------------*/
+
+  /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
+  HAL_Init();
+
+  /* USER CODE BEGIN Init */
+
+  /* USER CODE END Init */
+
+  /* Configure the system clock */
+  SystemClock_Config();
+
+  /* USER CODE BEGIN SysInit */
+
+  /* USER CODE END SysInit */
+
+  /* Initialize all configured peripherals */
+  MX_GPIO_Init();
+  MX_USART1_UART_Init();
+  MX_USART6_UART_Init();
+  /* USER CODE BEGIN 2 */
+  char buf[32];
+  sendUART(&huart6, "Initializing Wifi...");
+  initWifi(&huart1);
+  sendUART(&huart6, "Initialized Wifi");
+  setMode(&huart1, "STATION", buf, sizeof(buf));
+
+  sendUART(&huart6, "Connecting to Wifi...");
+  int ret = joinAP(&huart1, WIFI_SSID, WIFI_PASS, buf, sizeof(buf));
+  if (ret) {
+	  sendUART(&huart6, "Connected to Wifi Successfully");
+	  char ip[32];
+	  if (getIP(&huart1, ip, sizeof(ip))) {
+		  sendUART(&huart6, "IP Address: ");
+		  sendUART(&huart6,ip);
+		  initServer();
+		  sendUART(&huart6, "Server Initialized successfully");
+	  } else {
+		  sendUART(&huart6, "Failed to get IP");
+	  }
+  } else {
+	  sendUART(&huart6, "Failed to connect to wifi");
+  }
+  /* USER CODE END 2 */
+
+  /* Infinite loop */
+  /* USER CODE BEGIN WHILE */
+  while (1)
+  {
+	  if (ret) {
+		  if (wifiDisconnected) {
+			  wifiDisconnected = 0;
+			  onWifiDisconnect();
+		  }
+		  handleResponse(handleRouting);
+	  }
+    /* USER CODE END WHILE */
+
+    /* USER CODE BEGIN 3 */
+  }
+  /* USER CODE END 3 */
+}
+
+/**
+  * @brief System Clock Configuration
+  * @retval None
+  */
+void SystemClock_Config(void)
+{
+  RCC_OscInitTypeDef RCC_OscInitStruct = {0};
+  RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
+
+  /** Configure the main internal regulator output voltage
+  */
+  __HAL_RCC_PWR_CLK_ENABLE();
+  __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE2);
+
+  /** Initializes the RCC Oscillators according to the specified parameters
+  * in the RCC_OscInitTypeDef structure.
+  */
+  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE;
+  RCC_OscInitStruct.HSEState = RCC_HSE_BYPASS;
+  RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
+  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
+  RCC_OscInitStruct.PLL.PLLM = 4;
+  RCC_OscInitStruct.PLL.PLLN = 84;
+  RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
+  RCC_OscInitStruct.PLL.PLLQ = 4;
+  if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
+  {
+    Error_Handler();
+  }
+
+  /** Initializes the CPU, AHB and APB buses clocks
+  */
+  RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
+                              |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
+  RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
+  RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
+  RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV2;
+  RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
+
+  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_2) != HAL_OK)
+  {
+    Error_Handler();
+  }
+}
+
+/**
+  * @brief USART1 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_USART1_UART_Init(void)
+{
+
+  /* USER CODE BEGIN USART1_Init 0 */
+
+  /* USER CODE END USART1_Init 0 */
+
+  /* USER CODE BEGIN USART1_Init 1 */
+
+  /* USER CODE END USART1_Init 1 */
+  huart1.Instance = USART1;
+  huart1.Init.BaudRate = 115200;
+  huart1.Init.WordLength = UART_WORDLENGTH_8B;
+  huart1.Init.StopBits = UART_STOPBITS_1;
+  huart1.Init.Parity = UART_PARITY_NONE;
+  huart1.Init.Mode = UART_MODE_TX_RX;
+  huart1.Init.HwFlowCtl = UART_HWCONTROL_NONE;
+  huart1.Init.OverSampling = UART_OVERSAMPLING_16;
+  if (HAL_UART_Init(&huart1) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN USART1_Init 2 */
+
+  /* USER CODE END USART1_Init 2 */
+
+}
+
+/**
+  * @brief USART6 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_USART6_UART_Init(void)
+{
+
+  /* USER CODE BEGIN USART6_Init 0 */
+
+  /* USER CODE END USART6_Init 0 */
+
+  /* USER CODE BEGIN USART6_Init 1 */
+
+  /* USER CODE END USART6_Init 1 */
+  huart6.Instance = USART6;
+  huart6.Init.BaudRate = 115200;
+  huart6.Init.WordLength = UART_WORDLENGTH_8B;
+  huart6.Init.StopBits = UART_STOPBITS_1;
+  huart6.Init.Parity = UART_PARITY_NONE;
+  huart6.Init.Mode = UART_MODE_TX_RX;
+  huart6.Init.HwFlowCtl = UART_HWCONTROL_NONE;
+  huart6.Init.OverSampling = UART_OVERSAMPLING_16;
+  if (HAL_UART_Init(&huart6) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN USART6_Init 2 */
+
+  /* USER CODE END USART6_Init 2 */
+
+}
+
+/**
+  * @brief GPIO Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_GPIO_Init(void)
+{
+  GPIO_InitTypeDef GPIO_InitStruct = {0};
+  /* USER CODE BEGIN MX_GPIO_Init_1 */
+
+  /* USER CODE END MX_GPIO_Init_1 */
+
+  /* GPIO Ports Clock Enable */
+  __HAL_RCC_GPIOH_CLK_ENABLE();
+  __HAL_RCC_GPIOA_CLK_ENABLE();
+  __HAL_RCC_GPIOC_CLK_ENABLE();
+
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_RESET);
+
+  /*Configure GPIO pin : PA5 */
+  GPIO_InitStruct.Pin = GPIO_PIN_5;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
+  /* USER CODE BEGIN MX_GPIO_Init_2 */
+
+  /* USER CODE END MX_GPIO_Init_2 */
+}
+
+/* USER CODE BEGIN 4 */
+
+/* USER CODE END 4 */
+
+/**
+  * @brief  This function is executed in case of error occurrence.
+  * @retval None
+  */
+void Error_Handler(void)
+{
+  /* USER CODE BEGIN Error_Handler_Debug */
+  /* User can add his own implementation to report the HAL error return state */
+  __disable_irq();
+  while (1)
+  {
+  }
+  /* USER CODE END Error_Handler_Debug */
+}
+#ifdef USE_FULL_ASSERT
+/**
+  * @brief  Reports the name of the source file and the source line number
+  *         where the assert_param error has occurred.
+  * @param  file: pointer to the source file name
+  * @param  line: assert_param error line source number
+  * @retval None
+  */
+void assert_failed(uint8_t *file, uint32_t line)
+{
+  /* USER CODE BEGIN 6 */
+  /* User can add his own implementation to report the file name and line number,
+     ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
+  /* USER CODE END 6 */
+}
+#endif /* USE_FULL_ASSERT */
