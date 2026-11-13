@@ -10,7 +10,7 @@ IOT_LAB/
 ├── .gitignore
 ├── 8051/
 │   ├── README.md
-│   ├── CAT1/ … CAT6/      (README.md, circuit.png, source, Keil project, .hex)
+│   ├── CAT1/ … CAT6/      (README.md with circuit diagram, source, STARTUP.A51, Keil project, Objects/*.hex)
 │   └── CAT5/5a, 5b, 5c    (sub-tasks, each with its own README and circuit)
 └── STM32/
     └── README.md

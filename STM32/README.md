@@ -13,4 +13,4 @@ Platform: STM32 · STM32CubeMX · Keil MDK / STM32 HAL
 | [CAT13](CAT13/) | sensorinterfacenucleo64RE |
 | [CAT14](CAT14/) | mqtt |
 
-Each experiment folder should contain a `README.md`, `circuit.png`, the CubeMX `.ioc`, `Core/`, `Drivers/` and the compiled `.hex`.
+Each experiment folder should contain a `README.md` (with the circuit diagram), the CubeMX `.ioc`, `Core/`, `Drivers/` and the compiled `.hex`.

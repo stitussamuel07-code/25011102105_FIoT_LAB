@@ -12,7 +12,15 @@
 
 ## Circuit Diagram
 
-![Circuit Diagram](circuit.png)
+```mermaid
+flowchart LR
+  STM32["STM32 board"]
+  WEMOS["Wemos D1 Mini (ESP8266)"]
+  STM32 -- "TX (e.g. PA2 / USART2_TX)" --> WEMOS
+  WEMOS -- "TX" --> STM32
+  STM32 --- GND["Common GND"] --- WEMOS
+  PWR["5V / 3.3V"] --> WEMOS
+```
 
 | Wemos D1 Mini pin | STM32 pin | Description |
 |---|---|---|
@@ -75,6 +83,5 @@ print to PC terminal: WIFI MODE : STATION, WIFI STATUS : CONNECTED, IP ADDRESS :
 - `*.ioc` – CubeMX configuration
 - `*.uvprojx` – Keil project
 - `*.hex` – compiled firmware
-- `circuit.png` – circuit diagram
 
 _Copy your STM32 project files into this folder._

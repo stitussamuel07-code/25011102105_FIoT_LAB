@@ -11,4 +11,4 @@ Platform: AT89S52 (8051) · Keil µVision (C51) · Proteus
 | [CAT5](CAT5/) | UART and Keypad Mode Control (5a, 5b, 5c) |
 | [CAT6](CAT6/) | LCD Display (16x2, 4-bit mode) |
 
-Each folder has a `README.md`, `circuit.png`, the source code, the Keil project and the compiled `.hex`.
+Each folder has a `README.md` (with the circuit diagram), the source code, `STARTUP.A51`, the Keil `.uvproj` and the compiled `.hex` in `Objects/`.

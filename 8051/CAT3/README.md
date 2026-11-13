@@ -1,40 +1,48 @@
-# CAT3 – Keypad, 7-Segment Display and LED Patterns
+# CAT2 – Key-Controlled LED Chaser
 
-| Field | Details |
-|---|---|
-| **EXP** | CAT3 |
-| **DATE** | _fill in (from questions PDF)_ |
-| **NAME OF EXP** | _copy exact title from questions PDF_ (working title: Keypad, 7-Segment Display and LED Patterns) |
-| **HARDWARE SETUP / PLATFORM** | AT89S52 (8051) · 11.0592 MHz crystal · Keil µVision (C51) · Proteus · 4x3 keypad (rows P2.7–P2.4, columns P2.3–P2.1) · common-cathode 7-segment on Port 0 · 4 LEDs (P1.1, P1.3, P1.5, P1.7) |
-| **TASK NO** | _fill in (from questions PDF)_ |
+**Experiment:** CONTINUOUS ASSESSMENT 2 – Key-Controlled LED Chaser
 
-## Circuit Diagram
+## 1. Hardware Used
 
-![Circuit Diagram](circuit.png)
+- **Microcontroller:** AT89S52 (8051 core) on the AT89S52 development kit
+- **GPIO Port / Pins (LEDs):** Port 1 – P1.1 (LED1), P1.3 (LED2), P1.5 (LED3), P1.7 (LED4)
+- **GPIO Port / Pins (Button):** Port 2 – P2.0 (keypad column, input), P2.5 (keypad row, driven low)
+- **Peripherals:** 4 external LEDs (active-high, through 330 Ω resistors to GND); one key of the kit's keypad as the push-button
+- **Power Supply:** 5V DC
+- **Circuit diagram:** shown below.
 
-## Core Logic
+### Circuit Diagram
 
-```
-scan keypad row by row
-key 1-4 : show digit on 7-seg, light that LED only
-key 5   : show 5, running LED (LED1 -> LED2 -> LED3 -> LED4)
-key 6   : show 6 only
-key 7   : show 7, alternate LED pairs (1,3) and (2,4)
-key 8   : show 8, blink all LEDs
-key 9   : show 9, all LEDs off
-key 0   : show 0 only
+```mermaid
+flowchart LR
+  P0["P1.1 (pin 2)"] --> R0["330 Ω"] --> L0["LED1"] --> G0["GND"]
+  P1["P1.3 (pin 4)"] --> R1["330 Ω"] --> L1["LED2"] --> G1["GND"]
+  P2["P1.5 (pin 6)"] --> R2["330 Ω"] --> L2["LED3"] --> G2["GND"]
+  P3["P1.7 (pin 8)"] --> R3["330 Ω"] --> L3["LED4"] --> G3["GND"]
+  K1["P2.5 (pin 26)<br/>driven LOW"] --- SW["Push button<br/>(keypad key)"] --- K2["P2.0 (pin 21)<br/>input"]
 ```
 
-- The 7-segment uses these Port 0 codes: 0=0x3F, 1=0x06, 2=0x5B, 3=0x4F, 4=0x66, 5=0x6D, 6=0x7D, 7=0x07, 8=0x7F, 9=0x6F.
-- Each key press is checked twice with a small delay (debounce).
+## 2. Core Logic / Pseudocode / Code Base
 
-## INFERENCE
+**Working Principle:**
 
-The keypad is scanned in software and each key selects a display digit and an LED pattern. Debouncing is needed so one press is not read as many.
+The key row P2.5 is held low and the column P2.0 is read. If P2.0 reads 0, the key is pressed. While the key is pressed, the four LEDs light one at a time (LED1 → LED2 → LED3 → LED4) with a software delay (200 × 200 loops) between steps. The LEDs keep their last state when the key is released.
 
-## Files
+**Pseudocode:**
 
-- `Ex4.c` – source code
-- `Ex4.uvproj` – Keil µVision project
-- `Objects/Ex4.hex` – compiled firmware (load into Proteus / flash to the chip)
-- `circuit.png` / `circuit.svg` – circuit diagram
+1. Define the four LED pins and the row (P2.5) and column (P2.0) pins.
+2. Drive the row low and read the column in `check()`.
+3. If the column is low (key pressed), light LED1 only and wait.
+4. Light LED2 only and wait, then LED3, then LED4.
+5. Repeat forever.
+
+**Code Base:**
+
+- `sbit` statements map each LED and the keypad lines to port bits.
+- `check()` drives the row low and returns 1 if the column is low.
+- `delay()` is the software delay between steps.
+- `main()` calls `check()` in an infinite loop and runs the LED sequence when it returns 1.
+
+## 3. Inference
+
+A keypad works by driving a row low and reading a column, and a low column means the key is pressed. Here one key starts the LED chaser, which shows basic input reading and output control together.

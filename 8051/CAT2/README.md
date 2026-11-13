@@ -1,36 +1,44 @@
-# CAT2 – Key-Controlled LED Chaser
+# CAT1 – LED Blinking
 
-| Field | Details |
-|---|---|
-| **EXP** | CAT2 |
-| **DATE** | _fill in (from questions PDF)_ |
-| **NAME OF EXP** | _copy exact title from questions PDF_ (working title: Key-Controlled LED Chaser) |
-| **HARDWARE SETUP / PLATFORM** | AT89S52 (8051) · 11.0592 MHz crystal · Keil µVision (C51) · Proteus · 4 LEDs (P1.1, P1.3, P1.5, P1.7) · 1 push button (row P2.5, column P2.0) |
-| **TASK NO** | _fill in (from questions PDF)_ |
+**Experiment:** CONTINUOUS ASSESSMENT 1 – LED Blinking
 
-## Circuit Diagram
+## 1. Hardware Used
 
-![Circuit Diagram](circuit.png)
+- **Microcontroller:** AT89S52 (8051 core) on the AT89S52 development kit
+- **GPIO Port / Pins (LEDs):** Port 1 – P1.4 (LED1), P1.0 (LED2)
+- **Peripherals:** 2 external LEDs (active-high, anode through a 330 Ω resistor to the port pin, cathode to GND)
+- **Power Supply:** 5V DC
+- **Circuit diagram:** shown below.
 
-## Core Logic
+### Circuit Diagram
 
-```
-loop forever:
-    drive row P2.5 low
-    if column P2.0 reads 0 (button pressed):
-        light LED1 -> delay -> LED2 -> delay -> LED3 -> delay -> LED4 -> delay
+```mermaid
+flowchart LR
+  P0["P1.4 (pin 5)"] --> R0["330 Ω"] --> L0["LED1"] --> G0["GND"]
+  P1["P1.0 (pin 1)"] --> R1["330 Ω"] --> L1["LED2"] --> G1["GND"]
 ```
 
-- Only one LED is on at a time, so it looks like a running light.
-- Nothing happens while the button is not pressed.
+## 2. Core Logic / Pseudocode / Code Base
 
-## INFERENCE
+**Working Principle:**
 
-A key matrix works by driving a row low and reading a column. A low column means the key at that crossing is pressed. This is used to start the LED chaser.
+Two LEDs are connected to Port 1. The microcontroller switches each pin HIGH and LOW. A software delay (nested 400 × 400 loops) between the changes makes the blinking visible. LED1 blinks first, then LED2, and this repeats forever.
 
-## Files
+**Pseudocode:**
 
-- `Ex3.c` – source code
-- `Ex3.uvproj` – Keil µVision project
-- `Objects/Ex3.hex` – compiled firmware (load into Proteus / flash to the chip)
-- `circuit.png` / `circuit.svg` – circuit diagram
+1. Include the 8051 register definition file `reg51.h`.
+2. Define P1.4 as LED1 and P1.0 as LED2.
+3. Create a delay function using nested loops.
+4. Turn LED1 ON, call delay, turn it OFF, call delay.
+5. Turn LED2 ON, call delay, turn it OFF, call delay.
+6. Repeat continuously.
+
+**Code Base:**
+
+- `sbit led1 = P1^4;` and `sbit led2 = P1^0;` map each LED to its port bit.
+- `delay()` uses nested `for` loops to waste time.
+- `main()` runs an infinite `while(1)` loop that blinks LED1 and then LED2.
+
+## 3. Inference
+
+The LEDs blink one after the other as the pins alternate between HIGH and LOW. The experiment shows GPIO output control and software delays in embedded C on the 8051.
