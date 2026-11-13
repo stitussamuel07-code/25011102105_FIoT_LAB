@@ -62,7 +62,7 @@ IOT_LAB/
 ├── README.md                   this file
 ├── 8051/
 │   ├── README.md
-│   └── CATn/                   README.md, *.c, *.uvproj, STARTUP.A51, Objects/*.hex
+│   └── CATn/                   README.md, circuit.png, *.c, *.uvproj, STARTUP.A51, Objects/*.hex
 └── STM32/
     ├── README.md
     └── CATn/                   README.md, project folder(s): *.ioc, Core/, Drivers/

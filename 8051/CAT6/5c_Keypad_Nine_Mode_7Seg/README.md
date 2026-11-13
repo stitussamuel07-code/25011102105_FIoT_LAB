@@ -1,6 +1,6 @@
-# CAT5 (5c) – Nine-Mode Keypad Controller with 7-Segment
+# CAT6 (5c) – Nine-Mode Keypad Controller with 7-Segment
 
-**Experiment:** CONTINUOUS ASSESSMENT 5 – Keypad Mode Selector with 7-Segment Display
+**Experiment:** CONTINUOUS ASSESSMENT 6 – Keypad Mode Selector with 7-Segment Display
 
 ## 1. Hardware Used
 
@@ -13,6 +13,8 @@
 - **Circuit diagram:** shown below.
 
 ### Circuit Diagram
+
+![Circuit Diagram](circuit.png)
 
 ```mermaid
 flowchart LR

@@ -1,6 +1,6 @@
-# CAT2 – Key-Controlled LED Chaser
+# CAT3 – Key-Controlled LED Chaser
 
-**Experiment:** CONTINUOUS ASSESSMENT 2 – Key-Controlled LED Chaser
+**Experiment:** CONTINUOUS ASSESSMENT 3 – Key-Controlled LED Chaser
 
 ## 1. Hardware Used
 
@@ -12,6 +12,8 @@
 - **Circuit diagram:** shown below.
 
 ### Circuit Diagram
+
+![Circuit Diagram](circuit.png)
 
 ```mermaid
 flowchart LR

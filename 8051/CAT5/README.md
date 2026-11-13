@@ -1,6 +1,6 @@
-# CAT4 – Timer 0 Interrupt LED Blink
+# CAT5 – Timer 0 Interrupt LED Blink
 
-**Experiment:** CONTINUOUS ASSESSMENT 4 – Timer 0 Interrupt Based LED Blink
+**Experiment:** CONTINUOUS ASSESSMENT 5 – Timer 0 Interrupt Based LED Blink
 
 ## 1. Hardware Used
 
@@ -11,6 +11,8 @@
 - **Circuit diagram:** shown below.
 
 ### Circuit Diagram
+
+![Circuit Diagram](circuit.png)
 
 ```mermaid
 flowchart LR

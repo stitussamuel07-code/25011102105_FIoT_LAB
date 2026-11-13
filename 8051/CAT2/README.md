@@ -1,6 +1,6 @@
-# CAT1 – LED Blinking
+# CAT2 – LED Blinking
 
-**Experiment:** CONTINUOUS ASSESSMENT 1 – LED Blinking
+**Experiment:** CONTINUOUS ASSESSMENT 2 – LED Blinking
 
 ## 1. Hardware Used
 
@@ -11,6 +11,8 @@
 - **Circuit diagram:** shown below.
 
 ### Circuit Diagram
+
+![Circuit Diagram](circuit.png)
 
 ```mermaid
 flowchart LR

@@ -87,3 +87,6 @@ RTE/
 *.elf
 *.htm
 >>>>>>> abe7737 (8051 correction)
+
+# generated copy of the circuit diagrams (circuit.png is the one used)
+circuit.svg

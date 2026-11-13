@@ -1,8 +1,8 @@
-# CAT5 – UART and Keypad Mode Control
+# CAT6 – UART and Keypad Mode Control
 
-**Experiment:** CONTINUOUS ASSESSMENT 5
+**Experiment:** CONTINUOUS ASSESSMENT 6
 
-CAT5 has three tasks. Each one has its own folder and README.
+CAT6 has three tasks. Each one has its own folder and README.
 
 | Sub-task | Folder | What it does |
 |---|---|---|

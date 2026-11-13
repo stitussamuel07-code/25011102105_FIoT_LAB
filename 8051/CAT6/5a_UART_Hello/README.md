@@ -1,6 +1,6 @@
-# CAT5 (5a) – UART Serial Transmission
+# CAT6 (5a) – UART Serial Transmission
 
-**Experiment:** CONTINUOUS ASSESSMENT 5 – Sending Text from the 8051 over UART
+**Experiment:** CONTINUOUS ASSESSMENT 6 – Sending Text from the 8051 over UART
 
 ## 1. Hardware Used
 
@@ -11,6 +11,8 @@
 - **Circuit diagram:** shown below.
 
 ### Circuit Diagram
+
+![Circuit Diagram](circuit.png)
 
 ```mermaid
 flowchart LR

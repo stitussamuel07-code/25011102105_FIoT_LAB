@@ -1,6 +1,6 @@
-# CAT6 – 16×2 LCD Interfacing
+# CAT7 – 16×2 LCD Interfacing
 
-**Experiment:** CONTINUOUS ASSESSMENT 6 – Interfacing a 16×2 LCD in 4-bit Mode
+**Experiment:** CONTINUOUS ASSESSMENT 7 – Interfacing a 16×2 LCD in 4-bit Mode
 
 ## 1. Hardware Used
 
@@ -11,6 +11,8 @@
 - **Circuit diagram:** shown below.
 
 ### Circuit Diagram
+
+![Circuit Diagram](circuit.png)
 
 ```mermaid
 flowchart LR

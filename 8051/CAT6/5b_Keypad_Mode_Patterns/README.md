@@ -1,6 +1,6 @@
-# CAT5 (5b) – Keypad Mode Switch with LED Patterns
+# CAT6 (5b) – Keypad Mode Switch with LED Patterns
 
-**Experiment:** CONTINUOUS ASSESSMENT 5 – Four-Mode LED Controller
+**Experiment:** CONTINUOUS ASSESSMENT 6 – Four-Mode LED Controller
 
 ## 1. Hardware Used
 
@@ -12,6 +12,8 @@
 - **Circuit diagram:** shown below.
 
 ### Circuit Diagram
+
+![Circuit Diagram](circuit.png)
 
 ```mermaid
 flowchart LR

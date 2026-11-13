@@ -1,6 +1,6 @@
-# CAT3 – Keypad, 7-Segment Display and LED Patterns
+# CAT4 – Keypad, 7-Segment Display and LED Patterns
 
-**Experiment:** CONTINUOUS ASSESSMENT 3 – Keypad Controlled 7-Segment Display and LED Patterns
+**Experiment:** CONTINUOUS ASSESSMENT 4 – Keypad Controlled 7-Segment Display and LED Patterns
 
 ## 1. Hardware Used
 
@@ -13,6 +13,8 @@
 - **Circuit diagram:** shown below.
 
 ### Circuit Diagram
+
+![Circuit Diagram](circuit.png)
 
 ```mermaid
 flowchart LR
