@@ -1,55 +1,57 @@
-# Prerequisites
-*.d
 
-# Object files
-*.o
-*.ko
+# ===== Keil uVision (8051 / C51) =====
+
+# Generated build folders
+**/Objects/*
+!**/Objects/*.hex
+**/Listings/
+
+# Keil temporary and user-specific files
+*.uvgui.*
+*.uvguix.*
+*.uvopt
+*.uvoptx
+
+# Build artifacts
 *.obj
-*.elf
-
-# Linker output
-*.ilk
+*.o
+*.lst
+*.m51
 *.map
-*.exp
+*.lnp
+*.axf
+*.elf
+*.htm
+*.dep
+*.d
+*.crf
+*.i
+*._ia
+*.bak
+*.plg
+*.sbr
+*.tra
+JLinkLog.txt
 
-# Precompiled Headers
-*.gch
-*.pch
+# ===== STM32CubeIDE =====
 
-# Libraries
-*.lib
-*.a
-*.la
-*.lo
+# Generated build folders
+**/Debug/
+**/Release/
 
-# Shared objects (inc. Windows DLLs)
-*.dll
-*.so
-*.so.*
-*.dylib
-
-# Executables
-*.exe
-*.out
-*.app
-*.i*86
-*.x86_64
-*.hex
-
-# Debug files
-*.dSYM/
+# Build artifacts
 *.su
-*.idb
-*.pdb
+*.cyclo
+*.list
 
-# Kernel Module Compile Results
-*.mod*
-*.cmd
-.tmp_versions/
-modules.order
-Module.symvers
-Mkfile.old
-dkms.conf
+# Workspace and machine-specific files
+.metadata/
+RemoteSystemsTempFiles/
+*.launch
+.osx.project
+**/.settings/language.settings.xml
 
-# debug information files
-*.dwo
+# ===== Operating System =====
+
+.DS_Store
+__pycache__/
