@@ -1,46 +1,34 @@
-# CAT5 – Timer 0 Interrupt LED Blink
+# EXPERIMENT DETAILS
 
-**Experiment:** CONTINUOUS ASSESSMENT 5 – Timer 0 Interrupt Based LED Blink
+**EXP:** CONTINUOUS ASSESSMENT 5
 
-## 1. Hardware Used
+**DATE:** _fill in_
+
+**NAME OF EXP:** Hardware Timer-Based LED Blinking
+
+**HARDWARE SETUP / PLATFORM:** AT89S52 Development Kit (11.0952 MHz crystal) + Keil µVision (C51) + 1 LED
+
+---
+
+## Overview
+
+Blink an LED using the 8051's hardware Timer 0 and its interrupt instead of a software delay loop, so the timing is accurate and the main loop is free.
+
+**Expected outcome:** The LED on P1.1 toggles about once per second, driven entirely from the Timer 0 interrupt; `main()` only sets up the timer.
+
+## Circuit Diagram
 
 - **Microcontroller:** AT89S52 (8051 core) on the AT89S52 development kit
-- **GPIO Port / Pins (LED):** Port 1 – P1.1 (LED)
-- **Peripherals:** 1 external LED (active-high, through a 330 Ω resistor to GND); internal Timer 0 in mode 1 (16-bit). Assuming an 11.0592 MHz crystal.
+- **LED:** P1.1 (active-high, through 330 Ω to GND)
+- **Timer:** Timer 0 in mode 1 (16-bit), reload 0xF199 ≈ 4 ms per overflow
 - **Power Supply:** 5V DC
-- **Circuit diagram:** shown below.
-
-### Circuit Diagram
 
 ![Circuit Diagram](circuit.png)
 
-```mermaid
-flowchart LR
-  P0["P1.1 (pin 2)"] --> R0["330 Ω"] --> L0["LED"] --> G0["GND"]
-```
+## Tasks
 
-## 2. Core Logic / Pseudocode / Code Base
+| Task | What it does | Outcome |
+|---|---|---|
+| [TASK 5A Timer 0 Interrupt LED Blink](TASK5A/) | Configures Timer 0 mode 1 with interrupt; the ISR reloads the timer, counts 250 overflows and toggles the LED | ≈ 1 s LED toggle from the timer interrupt |
 
-**Working Principle:**
-
-Timer 0 runs in mode 1 and is loaded with 0xF199, so it overflows after about 3687 counts (≈ 4 ms). Each overflow triggers the Timer 0 interrupt. The interrupt routine reloads the timer and counts overflows. After 250 overflows (≈ 1 s) the LED is toggled. The main loop stays empty, so the blinking is fully interrupt driven.
-
-**Pseudocode:**
-
-1. Define P1.1 as the LED and set the LED OFF.
-2. Set `TMOD = 0x01` (Timer 0, mode 1) and load `TH0 = 0xF1`, `TL0 = 0x99`.
-3. Enable the Timer 0 interrupt (`ET0 = 1`) and the global interrupt (`EA = 1`).
-4. Start Timer 0 (`TR0 = 1`).
-5. In the interrupt routine: reload the timer and increment `count`.
-6. When `count` reaches 250, toggle the LED and reset `count`.
-7. The main loop does nothing.
-
-**Code Base:**
-
-- `timer0_ISR()` is the interrupt service routine for Timer 0 (`interrupt 1`).
-- `TMOD`, `TH0`, `TL0`, `TR0`, `ET0` and `EA` configure and start the timer interrupt.
-- `count` counts the overflows to build a 1 second interval.
-
-## 3. Inference
-
-The LED toggles about every second without any delay loop in `main()`. Using a timer interrupt gives accurate timing and leaves the CPU free for other work.
+Each task folder contains its Keil µVision project (`.uvproj`, C source, `STARTUP.A51`, `Objects/*.hex`) and a README with the task's hardware, core logic, pseudocode, code base and inference.

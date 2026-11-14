@@ -1,46 +1,35 @@
-# CAT2 – LED Blinking
+# EXPERIMENT DETAILS
 
-**Experiment:** CONTINUOUS ASSESSMENT 2 – LED Blinking
+**EXP:** CONTINUOUS ASSESSMENT 2
 
-## 1. Hardware Used
+**DATE:** _fill in_
+
+**NAME OF EXP:** 8051 Tool Chain Setup – Development Board – AT89S52
+
+**HARDWARE SETUP / PLATFORM:** AT89S52 Development Kit (11.0952 MHz crystal) + Keil µVision (C51) + 2 LEDs
+
+---
+
+## Overview
+
+Set up the 8051 tool chain (Keil µVision, C51 compiler, ISP programmer) and run the first bare-metal programs on the AT89S52 board: blink LEDs with a software delay, then move the delay into a reusable library.
+
+**Expected outcome:** The LEDs blink at the programmed rate, and the same blink works with the custom `delay_ms()` library.
+
+## Circuit Diagram
 
 - **Microcontroller:** AT89S52 (8051 core) on the AT89S52 development kit
-- **GPIO Port / Pins (LEDs):** Port 1 – P1.4 (LED1), P1.0 (LED2)
-- **Peripherals:** 2 external LEDs (active-high, anode through a 330 Ω resistor to the port pin, cathode to GND)
+- **LEDs (Task 2B):** P1.4 (LED1) and P1.0 (LED2), active-high, through 330 Ω to GND
+- **LED (Task 2C):** Built-in user LED on P1.0 (active-low)
 - **Power Supply:** 5V DC
-- **Circuit diagram:** shown below.
-
-### Circuit Diagram
 
 ![Circuit Diagram](circuit.png)
 
-```mermaid
-flowchart LR
-  P0["P1.4 (pin 5)"] --> R0["330 Ω"] --> L0["LED1"] --> G0["GND"]
-  P1["P1.0 (pin 1)"] --> R1["330 Ω"] --> L1["LED2"] --> G1["GND"]
-```
+## Tasks
 
-## 2. Core Logic / Pseudocode / Code Base
+| Task | What it does | Outcome |
+|---|---|---|
+| [TASK 2B Bare-Metal LED Blink](TASK2B/) | Blinks two LEDs one after the other using a nested-loop software delay | LEDs blink alternately |
+| [TASK 2C Customed Library Function for Delay Functionality](TASK2C/) | Moves the delay into `delay.h` / `delay.c` and blinks the LED with `delay_ms(500)` | Reusable 1 ms-calibrated delay library |
 
-**Working Principle:**
-
-Two LEDs are connected to Port 1. The microcontroller switches each pin HIGH and LOW. A software delay (nested 400 × 400 loops) between the changes makes the blinking visible. LED1 blinks first, then LED2, and this repeats forever.
-
-**Pseudocode:**
-
-1. Include the 8051 register definition file `reg51.h`.
-2. Define P1.4 as LED1 and P1.0 as LED2.
-3. Create a delay function using nested loops.
-4. Turn LED1 ON, call delay, turn it OFF, call delay.
-5. Turn LED2 ON, call delay, turn it OFF, call delay.
-6. Repeat continuously.
-
-**Code Base:**
-
-- `sbit led1 = P1^4;` and `sbit led2 = P1^0;` map each LED to its port bit.
-- `delay()` uses nested `for` loops to waste time.
-- `main()` runs an infinite `while(1)` loop that blinks LED1 and then LED2.
-
-## 3. Inference
-
-The LEDs blink one after the other as the pins alternate between HIGH and LOW. The experiment shows GPIO output control and software delays in embedded C on the 8051.
+Each task folder contains its Keil µVision project (`.uvproj`, C source, `STARTUP.A51`, `Objects/*.hex`) and a README with the task's hardware, core logic, pseudocode, code base and inference.

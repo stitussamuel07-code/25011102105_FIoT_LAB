@@ -4,41 +4,40 @@ Lab experiments for **25CS2741 Fundamentals of Internet of Things + Lab** (B.Tec
 
 The experiments start with bare-metal register programming on the 8051, move to STM32 microcontrollers with STM32CubeMX and the HAL library, and finish with networked sensing: an STM32 talks to a Wemos (ESP8266) Wi-Fi modem with AT commands, serves data over HTTP and publishes it over MQTT. The final project (Cat 15) is a server rack monitor with a DHT11 sensor, MQTT and a Node-RED dashboard.
 
-Each experiment folder (`CATn`) has its own **README.md** with the hardware used, circuit diagram, core logic, pseudocode and inference. The 8051 folders also contain the source code, the Keil project and the compiled `.hex`.
+Each experiment folder (`CATn`) has a **README.md** index with the experiment details, date, overview, circuit diagram and a table of its tasks. Each task folder (`TASKnX`) contains the project and its own **README.md** with the hardware used, core logic, pseudocode, code base and inference.
 
 ## Experiments
 
 ### 8051 (AT89S52) – Bare-Metal Embedded C, Keil µVision
 
-| # | Experiment | Key concepts | Folder |
+| # | Experiment | Key concepts | Tasks |
 |---|---|---|---|
-| Cat 2 | LED blinking | SFR bit access (`sbit`), software delay | [`CAT2`](8051/CAT2/) |
-| Cat 3 | Key-controlled LED chaser | Keypad row/column reading, GPIO input and output | [`CAT3`](8051/CAT3/) |
-| Cat 4 | Keypad, seven-segment display and LED patterns | Keypad scanning, debouncing, seven-segment codes, mode flags | [`CAT4`](8051/CAT4/) |
-| Cat 5 | Timer 0 interrupt LED blink | Timer 0 mode 1, reload value, interrupt service routine | [`CAT5`](8051/CAT5/) |
-| Cat 6 | UART driver and serial debugging | `SCON`, `TMOD`, Timer 1 baud-rate generation, `TI` / `RI` flags | [`CAT6`](8051/CAT6/) |
-| Cat 7 | 16×2 LCD interfacing | HD44780 4-bit interface, command and data nibbles | [`CAT7`](8051/CAT7/) |
+| [Cat 2](8051/CAT2/) | 8051 tool chain setup, LED blink and custom delay library | SFR bit access (`sbit`), software delay, `delay_ms()` library | [`TASK2B`](8051/CAT2/TASK2B/), [`TASK2C`](8051/CAT2/TASK2C/) |
+| [Cat 3](8051/CAT3/) | Button-controlled LED pattern generator | Keypad row/column input, GPIO output | [`TASK3A`](8051/CAT3/TASK3A/) |
+| [Cat 4](8051/CAT4/) | HMI with matrix keypad, LEDs and seven-segment display | Keypad scanning, debouncing, seven-segment codes, mode flags | [`TASK4A`](8051/CAT4/TASK4A/) |
+| [Cat 5](8051/CAT5/) | Hardware timer-based LED blinking | Timer 0 mode 1, reload value, interrupt service routine | [`TASK5A`](8051/CAT5/TASK5A/) |
+| [Cat 6](8051/CAT6/) | UART driver and serial debugging | `SCON` / `TMOD`, Timer 1 baud-rate generation, `TI` / `RI` flags, echo | [`TASK6A`](8051/CAT6/TASK6A/), [`TASK6B`](8051/CAT6/TASK6B/) |
+| [Cat 7](8051/CAT7/) | 16×2 LCD driver and dynamic display control | HD44780 4-bit interface, DDRAM addressing, keypad scanning | [`TASK7A`](8051/CAT7/TASK7A/), [`TASK7B`](8051/CAT7/TASK7B/), [`TASK7C`](8051/CAT7/TASK7C/) |
 
 ### STM32 – STM32CubeMX + HAL, Keil MDK-ARM / STM32CubeIDE
 
-| # | Experiment | MCU | Key concepts | Folder |
+| # | Experiment | Board | Key concepts | Tasks |
 |---|---|---|---|---|
-| Cat 8 | GPIO bring-up: LED blink (8A) and switch-controlled LED (8B) | STM32F103C8 | GPIO output and input, `HAL_Delay()`, pull-ups, debouncing | [`CAT8`](STM32/CAT8/) |
-| Cat 9 | UART configuration | STM32F103C8 | USART with HAL, serial terminal | [`CAT9`](STM32/CAT9/) |
-| Cat 10 | STM32–Wemos Wi-Fi modem interface using AT commands | STM32F103C8 | Two UARTs, ESP8266 AT commands, station mode | [`CAT10`](STM32/CAT10/) |
-| Cat 11 | HTTP server on the Wi-Fi modem | STM32F410RB | TCP server over AT commands, HTTP response | [`CAT11`](STM32/CAT11/) |
-| Cat 12 | Wi-Fi server and LED blink | STM32F401RE | Cortex-M4 GPIO, UART to Wemos | [`CAT12`](STM32/CAT12/) |
-| Cat 13 | Sensor interface over I²C | STM32F401RE | I²C, sensor data over UART and Wi-Fi | [`CAT13`](STM32/CAT13/) |
-| Cat 14 | MQTT publishing | STM32F401RE | MQTT over the Wi-Fi modem, public broker | [`CAT14`](STM32/CAT14/) |
-| Cat 15 | IoT project: server rack monitor | STM32F103C6 | DHT11 single-wire timing, MQTT publishing, local LED/buzzer alarm, Node-RED dashboard with alerts and automatic shutdown | [`CAT15`](STM32/CAT15/) |
+| [Cat 8](STM32/CAT8/) | GPIO bring-up and switch-controlled LED | Blue Pill (STM32F103C8) | GPIO input/output, pull-ups, debouncing | [`TASK8A`](STM32/CAT8/TASK8A/), [`TASK8B`](STM32/CAT8/TASK8B/), [`TASK8C`](STM32/CAT8/TASK8C/) |
+| [Cat 9](STM32/CAT9/) | UART command-controlled LED | Blue Pill (STM32F103C8) | USART with HAL, echo, command parsing | [`TASK9A`](STM32/CAT9/TASK9A/), [`TASK9B`](STM32/CAT9/TASK9B/) |
+| [Cat 10](STM32/CAT10/) | STM32–Wemos (ESP8266) Wi-Fi modem interface using AT commands | Blue Pill (STM32F103C8) | Two UARTs, ESP8266 AT commands, station mode, joining Wi-Fi | [`TASK10A`](STM32/CAT10/TASK10A/), [`TASK10B`](STM32/CAT10/TASK10B/), [`TASK10C`](STM32/CAT10/TASK10C/) |
+| [Cat 11](STM32/CAT11/) | HTTP server on the STM32–Wemos Wi-Fi modem | Blue Pill | TCP server over AT commands, `+IPD` requests, HTTP response | [`TASK11A`](STM32/CAT11/TASK11A/), [`TASK11B`](STM32/CAT11/TASK11B/), [`TASK11C`](STM32/CAT11/TASK11C/) |
+| [Cat 12](STM32/CAT12/) | Cortex-M4 GPIO and user input | NUCLEO-F401RE | F4 clock tree, on-board LED/button, short/long press | [`TASK12A`](STM32/CAT12/TASK12A/), [`TASK12B`](STM32/CAT12/TASK12B/), [`TASK12C`](STM32/CAT12/TASK12C/) |
+| [Cat 13](STM32/CAT13/) | BME280 over I²C with the Bosch Sensor API | NUCLEO-F401RE | I²C, Bosch Sensor API, UART output, HTTP response | [`TASK13A`](STM32/CAT13/TASK13A/), [`TASK13B`](STM32/CAT13/TASK13B/), [`TASK13C`](STM32/CAT13/TASK13C/) |
+| [Cat 14](STM32/CAT14/) | MQTT publishing of BME280 data | NUCLEO-F401RE | MQTT CONNECT/PUBLISH packets, public broker, custom ESP8266 API | [`TASK14`](STM32/CAT14/TASK14/) |
+| [Cat 15](STM32/CAT15/) | IoT project: server rack monitor | Blue Pill (STM32F103C6) | DHT11 single-wire timing, MQTT publishing, local LED/buzzer alarm, Node-RED dashboard | [`TASK15`](STM32/CAT15/TASK15/) |
 
 ## Hardware
 
 | Hardware | Used in | Notes |
 |---|---|---|
 | AT89S52 development kit | Cat 2 – Cat 7 | On-board LEDs, matrix keypad, seven-segment display and 16×2 LCD; programmed over ISP |
-| STM32 Blue Pill (STM32F103C8 / C6) | Cat 8 – Cat 10, Cat 15 | Programmed with an ST-Link over SWD |
-| STM32F410RB board | Cat 11 | Programmed through the on-board ST-LINK |
+| STM32 Blue Pill (STM32F103C8 / C6) | Cat 8 – Cat 11, Cat 15 | Programmed with an ST-Link over SWD |
 | NUCLEO-F401RE (STM32F401RE) | Cat 12 – Cat 14 | On-board ST-LINK |
 | Wemos D1 Mini (ESP8266) | Cat 10 – Cat 15 | Wi-Fi modem running AT-command firmware |
 | I²C sensor module | Cat 13 | Connected to the STM32 over I²C |
@@ -61,14 +60,13 @@ Each experiment folder (`CATn`) has its own **README.md** with the hardware used
 ## Repository Layout
 
 ```
-IOT_LAB/
-├── README.md                   this file
-├── 8051/
-│   ├── README.md
-│   └── CATn/                   README.md, circuit.png, *.c, *.uvproj, STARTUP.A51, Objects/*.hex
-└── STM32/
-    ├── README.md
-    └── CATn/                   README.md, project folder(s): *.ioc, Core/, Drivers/
+<platform>/CATn/
+├── README.md                 experiment index: details, date, overview, circuit, task table
+├── circuit.png               circuit diagram
+└── TASKnX/                   one folder per task
+    ├── README.md             task details: hardware, logic, pseudocode, code, inference
+    ├── 8051:  *.c, *.uvproj, STARTUP.A51, Objects/*.hex
+    └── STM32: *.ioc, Core/, Drivers/, MDK-ARM/*.uvprojx
 ```
 
 Build output is not committed (see [.gitignore](.gitignore)): Keil's `Listings/` and the rest of `Objects/`, STM32CubeIDE's `Debug/` and `Release/`, and per-user IDE files. The 8051 projects keep their `.hex` file so they can be flashed without rebuilding.

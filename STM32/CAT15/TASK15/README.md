@@ -17,7 +17,7 @@
 - **Peripherals:** DHT11 sensor module, Wemos D1 Mini (ESP8266), warning LED, buzzer
 - **Power Supply:** 3.3 V to the DHT11, 5 V to the Wemos, common GND
 
-Circuit diagram: see the [experiment README](../README.md#circuit-diagram).
+![Circuit Diagram](../circuit.png)
 
 ### 2. Core Logic / Pseudocode / Code Base
 
@@ -83,7 +83,7 @@ The STM32 reads the DHT11 by timing its single-wire pulses with a 1 µs hardware
 - **Computer in the rack:** reachable over SSH from the Node-RED host, for the automatic shutdown
 - **Weather data:** OpenWeatherMap current-weather and forecast APIs
 
-Circuit diagram: see the [experiment README](../README.md#circuit-diagram).
+![Node-Red Dashboard](../dashboard.png)
 
 ### 2. Core Logic / Pseudocode / Code Base
 

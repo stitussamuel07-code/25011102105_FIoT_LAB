@@ -1,53 +1,36 @@
-# CAT7 – 16×2 LCD Interfacing
+# EXPERIMENT DETAILS
 
-**Experiment:** CONTINUOUS ASSESSMENT 7 – Interfacing a 16×2 LCD in 4-bit Mode
+**EXP:** CONTINUOUS ASSESSMENT 7
 
-## 1. Hardware Used
+**DATE:** _fill in_
+
+**NAME OF EXP:** 16×2 LCD Driver Development and Dynamic Display Control
+
+**HARDWARE SETUP / PLATFORM:** AT89S52 Development Kit (11.0952 MHz crystal) + Keil µVision (C51) + 16×2 Character LCD (HD44780) + 4×4 Matrix Keypad
+
+---
+
+## Overview
+
+Write a 4-bit HD44780 LCD driver for the AT89S52 and use it to display characters and strings, position text on both rows, and move a character around the display under keypad control.
+
+**Expected outcome:** Text appears where the program places it on the two LCD rows, and in Task 7C the keypad moves a character across the display.
+
+## Circuit Diagram
 
 - **Microcontroller:** AT89S52 (8051 core) on the AT89S52 development kit
-- **GPIO Port / Pins:** Port 3 – P3.2 (RS), P3.3 (E), P3.4 – P3.7 (D4 – D7)
-- **Peripherals:** 16×2 HD44780 LCD in 4-bit mode (RW to GND, VO to a 10 kΩ contrast pot, backlight A through 220 Ω to 5V, K to GND)
+- **LCD:** Built-in 16×2 character LCD on the DS1 header – RS → P3.2, E → P3.3, D4–D7 → P3.4–P3.7, RW → GND (4-bit mode)
+- **Keypad (Task 7C):** Built-in 4×4 matrix keypad on Port 2 – rows P2.7–P2.4, columns P2.3–P2.0
 - **Power Supply:** 5V DC
-- **Circuit diagram:** shown below.
-
-### Circuit Diagram
 
 ![Circuit Diagram](circuit.png)
 
-```mermaid
-flowchart LR
-  MCU["AT89S52"]
-  MCU -- "P3.2 (pin 12)" --> RS["LCD RS"]
-  MCU -- "P3.3 (pin 13)" --> E["LCD E"]
-  MCU -- "P3.4 – P3.7<br/>(pins 14 – 17)" --> D["LCD D4 – D7"]
-  LCD["LCD pins"] -- "VSS, RW, K" --> GND["GND"]
-  VCC["+5V"] -- "VDD, A (via 220 Ω)" --> LCD
-  POT["10 kΩ pot"] -- "wiper" --> VO["LCD VO"]
-```
+## Tasks
 
-## 2. Core Logic / Pseudocode / Code Base
+| Task | What it does | Outcome |
+|---|---|---|
+| [TASK 7A LCD Initialization and Character/String Display](TASK7A/) | Initializes the LCD in 4-bit mode and prints a character and two strings using DDRAM addressing | LCD driver and static text on both rows |
+| [TASK 7B Two-Row Text Placement](TASK7B/) | Uses the driver to print `Hello` on row 1 and `World` at column 11 of row 2 (`0xCA`) | Text positioned anywhere on the display |
+| [TASK 7C 4×4 Keypad-Based Character Movement](TASK7C/) | Scans the keypad and moves a character around the LCD according to the key pressed | Keypad-controlled dynamic display |
 
-**Working Principle:**
-
-The LCD is used in 4-bit mode, so each byte is sent as two nibbles (upper first, then lower), each latched with a pulse on E. RS = 0 sends a command and RS = 1 sends data. After the start-up sequence (0x30 three times, then 0x20 to select 4-bit mode), the LCD is set to 2 lines (0x28), display ON (0x0C), cursor right (0x06) and cleared (0x01). "Hello" is written at the start of line 1 (0x80) and "World" at column 11 of line 2 (0xCA).
-
-**Pseudocode:**
-
-1. Define RS and E on P3.2 and P3.3; data lines use P3.4 – P3.7.
-2. Wait 20 ms for the LCD to power up.
-3. Send 0x30 three times, then 0x20 to switch to 4-bit mode.
-4. Send the setup commands 0x28, 0x0C, 0x06 and 0x01.
-5. Set the cursor to line 1 (0x80) and print "Hello".
-6. Set the cursor to line 2, column 11 (0xCA) and print "World".
-7. Stop in an infinite loop.
-
-**Code Base:**
-
-- `lcd_nibble()` puts 4 bits on P3.4 – P3.7 and pulses E.
-- `lcd_cmd()` and `lcd_data()` send a byte as two nibbles with RS low or high.
-- `lcd_init()` runs the start-up sequence.
-- `lcd_puts()` prints a string one character at a time.
-
-## 3. Inference
-
-The LCD shows the text correctly using only six port pins. The 4-bit mode saves pins, and the start-up sequence must be followed exactly for the LCD to work.
+Each task folder contains its Keil µVision project (`.uvproj`, C source, `STARTUP.A51`, `Objects/*.hex`) and a README with the task's hardware, core logic, pseudocode, code base and inference.

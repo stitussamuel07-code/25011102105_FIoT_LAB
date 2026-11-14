@@ -1,87 +1,43 @@
-# CAT10 – STM32–Wemos Wi-Fi Modem Interface Using AT Commands
+# EXPERIMENT DETAILS
 
-| Field | Details |
-|---|---|
-| **EXP** | CAT10 (Continuous Lab Evaluation-10) |
-| **DATE** | 05/10/2026 (Week 9) |
-| **NAME OF EXP** | STM32–Wemos Wi-Fi Modem Interface Using AT Commands |
-| **HARDWARE SETUP / PLATFORM** | STM32 board _(add exact model)_ · Wemos D1 Mini (ESP8266) · STM32CubeMX · Keil MDK · STM32 HAL · PuTTY / Tera Term |
-| **TASK NO** | 9A, 9B, 9C |
+**EXP:** CONTINUOUS ASSESSMENT 10
 
-**Problem statement:** Interface an STM32 board with a Wemos Mini / ESP8266 through UART, configure the Wi-Fi modem using AT commands, and show the responses on the PC terminal.
+**DATE:** 12/10/2026
 
-## Circuit Diagram
+**NAME OF EXP:** STM32–Wemos Wi-Fi Modem Interface Using AT Commands
 
-```mermaid
-flowchart LR
-  STM32["STM32 board"]
-  WEMOS["Wemos D1 Mini (ESP8266)"]
-  STM32 -- "TX (e.g. PA2 / USART2_TX)" --> WEMOS
-  WEMOS -- "TX" --> STM32
-  STM32 --- GND["Common GND"] --- WEMOS
-  PWR["5V / 3.3V"] --> WEMOS
-```
-
-| Wemos D1 Mini pin | STM32 pin | Description |
-|---|---|---|
-| TX | RX (e.g. PA3 / USART2_RX) | Data from Wemos to STM32 |
-| RX | TX (e.g. PA2 / USART2_TX) | Data from STM32 to Wemos |
-| GND | GND | Common ground |
-| 5V / 3.3V | 5V / 3.3V | Power for the Wemos |
-
-_Update the pins above to match what you actually wired (UART1 for Wemos, UART2 for PC if used)._
+**HARDWARE SETUP / PLATFORM:** CubeMX + STM32CubeIDE + STM32 Development Board Blue Pill STM32F103C8T6 + Wemos D1 Mini (ESP8266) Wi-Fi Module + USB-to-TTL Serial Converter + PuTTY
 
 ---
 
-## Task 9A – Establish STM32 ↔ Wemos UART Communication
+## Overview
 
-**Core logic**
+Interface the STM32 with a Wemos D1 Mini (ESP8266) through UART and configure the Wi-Fi modem using AT commands. One UART carries the AT commands to the Wemos and a second UART shows the results on the PC terminal.
 
-```
-STM32 sends "AT\r\n" over UART to Wemos
-Wemos replies "OK\r\n"
-STM32 receives the reply and forwards it to the PC terminal
-```
+**Expected outcome:** The STM32 communicates with the ESP8266, explores its AT command set, and connects it to the Wi-Fi network, reporting the IP and MAC address on the PC terminal.
 
-**Inference:** _write what you observed (e.g. the Wemos answered OK, so the UART link works)._
+## Circuit Diagram
 
-## Task 9B – Explore the ESP8266 AT Command Interface
+- **Development Board:** STM32 Blue Pill
+- **Microcontroller IC:** STM32F103C8T6 (ARM Cortex-M3, 72 MHz)
+- **UART1 Pins (Wemos):** PA9 (USART1_TX) → Wemos RX, PA10 (USART1_RX) ← Wemos TX
+- **UART2 Pins (PC):** PA2 (USART2_TX) → converter RX, PA3 (USART2_RX) ← converter TX
+- **Peripherals:** Wemos D1 Mini (ESP8266) running AT firmware, USB-to-TTL (3.3 V) converter to PuTTY
+- **Power Supply:** Wemos powered from 5 V; STM32, Wemos and converter share a common GND
 
-| Requirement | Command used | Response observed |
+| UART | Connection | Purpose |
 |---|---|---|
-| Check modem response | `AT` | _fill in_ |
-| Check firmware / version | `AT+GMR` | _fill in_ |
-| Set Wi-Fi station mode | `AT+CWMODE=1` | _fill in_ |
-| Scan available networks | `AT+CWLAP` | _fill in_ |
-| Connect to an AP | `AT+CWJAP="SSID","password"` | _fill in_ |
-| Obtain network information | `AT+CIFSR` | _fill in_ |
-| Establish TCP connection | _fill in_ | _fill in_ |
-| Send application data | _fill in_ | _fill in_ |
+| USART1 | STM32 ↔ Wemos | AT commands and responses |
+| USART2 | STM32 ↔ PC | Debug / display |
 
-**Inference:** _fill in._
+![Circuit Diagram](circuit.png)
 
-## Task 9C – Connect Wemos to Wi-Fi
+## Tasks
 
-**Core logic**
+| Task | What it does | Outcome |
+|---|---|---|
+| [TASK 10A Establish STM32 ↔ Wemos UART Communication](TASK10A/) | Sends `AT` to the Wemos and shows `>> AT` / `<< OK` on the PC terminal | STM32 ↔ Wemos UART link proven |
+| [TASK 10B Explore the ESP8266 AT Command Interface](TASK10B/) | Sends `AT`, `AT+GMR`, `AT+CWMODE=1`, `AT+CWLAP` and displays each response | AT command interface explored |
+| [TASK 10C Connect Wemos to Wi-Fi](TASK10C/) | Sets station mode, joins the Wi-Fi network and reads the IP / MAC with `AT+CIFSR` | Wemos connected to Wi-Fi; IP and MAC reported |
 
-```
-send AT                -> expect OK
-send AT+CWMODE=1       -> station mode
-send AT+CWJAP="SSID","password" -> wait for WIFI CONNECTED / GOT IP
-send AT+CIFSR          -> read IP address
-print to PC terminal: WIFI MODE : STATION, WIFI STATUS : CONNECTED, IP ADDRESS : x.x.x.x
-```
-
-**Output:** _paste a terminal screenshot here._
-
-**Inference:** _fill in._
-
-## Files
-
-- `Core/` – application sources
-- `Drivers/` – HAL drivers
-- `*.ioc` – CubeMX configuration
-- `*.uvprojx` – Keil project
-- `*.hex` – compiled firmware
-
-_Copy your STM32 project files into this folder._
+Each task folder contains its STM32CubeMX / STM32CubeIDE project and a README with the task's hardware, core logic, pseudocode, code base and inference.
