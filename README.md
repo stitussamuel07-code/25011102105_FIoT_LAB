@@ -23,8 +23,7 @@ Each experiment folder (`CATn`) has its own **README.md** with the hardware used
 
 | # | Experiment | MCU | Key concepts | Folder |
 |---|---|---|---|---|
-| Cat 8A | LED blink | STM32F103C8 | GPIO output, `HAL_Delay()` | [`CAT8A`](STM32/CAT8A/) |
-| Cat 8B | Switch-controlled LED | STM32F103C8 | GPIO input, pull-ups, debouncing | [`CAT8B`](STM32/CAT8B/) |
+| Cat 8 | GPIO bring-up: LED blink (8A) and switch-controlled LED (8B) | STM32F103C8 | GPIO output and input, `HAL_Delay()`, pull-ups, debouncing | [`CAT8`](STM32/CAT8/) |
 | Cat 9 | UART configuration | STM32F103C8 | USART with HAL, serial terminal | [`CAT9`](STM32/CAT9/) |
 | Cat 10 | STM32–Wemos Wi-Fi modem interface using AT commands | STM32F103C8 | Two UARTs, ESP8266 AT commands, station mode | [`CAT10`](STM32/CAT10/) |
 | Cat 11 | HTTP server on the Wi-Fi modem | STM32F410RB | TCP server over AT commands, HTTP response | [`CAT11`](STM32/CAT11/) |
@@ -37,7 +36,7 @@ Each experiment folder (`CATn`) has its own **README.md** with the hardware used
 | Hardware | Used in | Notes |
 |---|---|---|
 | AT89S52 development kit | Cat 2 – Cat 7 | On-board LEDs, matrix keypad, seven-segment display and 16×2 LCD; programmed over ISP |
-| STM32F103C8 board | Cat 8A – Cat 10 | Programmed with an ST-Link over SWD |
+| STM32F103C8 board | Cat 8 – Cat 10 | Programmed with an ST-Link over SWD |
 | STM32F410RB board | Cat 11 | Programmed through the on-board ST-LINK |
 | NUCLEO-F401RE (STM32F401RE) | Cat 12 – Cat 14 | On-board ST-LINK |
 | Wemos D1 Mini (ESP8266) | Cat 10 – Cat 14 | Wi-Fi modem running AT-command firmware |

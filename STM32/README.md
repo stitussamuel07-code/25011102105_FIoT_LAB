@@ -4,8 +4,7 @@ Platform: STM32 · STM32CubeMX · Keil MDK / STM32 HAL
 
 | Folder | Project inside |
 |---|---|
-| [CAT8A](CAT8A/) | Ex1F103LEDBlink |
-| [CAT8B](CAT8B/) | switch |
+| [CAT8](CAT8/) | 8A: Ex1F103LEDBlink · 8B: switch |
 | [CAT9](CAT9/) | UART_config |
 | [CAT10](CAT10/) | WIFI (STM32–Wemos Wi-Fi modem using AT commands) |
 | [CAT11](CAT11/) | httpserver |
