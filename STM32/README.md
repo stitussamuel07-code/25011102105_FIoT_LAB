@@ -11,5 +11,6 @@ Platform: STM32 · STM32CubeMX · Keil MDK / STM32 HAL
 | [CAT12](CAT12/) | WifiServer, led blink |
 | [CAT13](CAT13/) | sensorinterfacenucleo64RE |
 | [CAT14](CAT14/) | mqtt |
+| [CAT15](CAT15/) | TASK15 – Server Rack Monitor (STM32F103C6 + DHT11 + ESP8266 MQTT + Node-RED) |
 
 Each experiment folder should contain a `README.md` (with the circuit diagram), the CubeMX `.ioc`, `Core/`, `Drivers/` and the compiled `.hex`.

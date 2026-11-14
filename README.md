@@ -2,7 +2,7 @@
 
 Lab experiments for **25CS2741 Fundamentals of Internet of Things + Lab** (B.Tech CSE (IoT), Shiv Nadar University Chennai).
 
-The experiments start with bare-metal register programming on the 8051, move to STM32 microcontrollers with STM32CubeMX and the HAL library, and finish with networked sensing: an STM32 talks to a Wemos (ESP8266) Wi-Fi modem with AT commands, serves data over HTTP and publishes it over MQTT.
+The experiments start with bare-metal register programming on the 8051, move to STM32 microcontrollers with STM32CubeMX and the HAL library, and finish with networked sensing: an STM32 talks to a Wemos (ESP8266) Wi-Fi modem with AT commands, serves data over HTTP and publishes it over MQTT. The final project (Cat 15) is a server rack monitor with a DHT11 sensor, MQTT and a Node-RED dashboard.
 
 Each experiment folder (`CATn`) has its own **README.md** with the hardware used, circuit diagram, core logic, pseudocode and inference. The 8051 folders also contain the source code, the Keil project and the compiled `.hex`.
 
@@ -30,17 +30,19 @@ Each experiment folder (`CATn`) has its own **README.md** with the hardware used
 | Cat 12 | Wi-Fi server and LED blink | STM32F401RE | Cortex-M4 GPIO, UART to Wemos | [`CAT12`](STM32/CAT12/) |
 | Cat 13 | Sensor interface over I²C | STM32F401RE | I²C, sensor data over UART and Wi-Fi | [`CAT13`](STM32/CAT13/) |
 | Cat 14 | MQTT publishing | STM32F401RE | MQTT over the Wi-Fi modem, public broker | [`CAT14`](STM32/CAT14/) |
+| Cat 15 | IoT project: server rack monitor | STM32F103C6 | DHT11 single-wire timing, MQTT publishing, local LED/buzzer alarm, Node-RED dashboard with alerts and automatic shutdown | [`CAT15`](STM32/CAT15/) |
 
 ## Hardware
 
 | Hardware | Used in | Notes |
 |---|---|---|
 | AT89S52 development kit | Cat 2 – Cat 7 | On-board LEDs, matrix keypad, seven-segment display and 16×2 LCD; programmed over ISP |
-| STM32F103C8 board | Cat 8 – Cat 10 | Programmed with an ST-Link over SWD |
+| STM32 Blue Pill (STM32F103C8 / C6) | Cat 8 – Cat 10, Cat 15 | Programmed with an ST-Link over SWD |
 | STM32F410RB board | Cat 11 | Programmed through the on-board ST-LINK |
 | NUCLEO-F401RE (STM32F401RE) | Cat 12 – Cat 14 | On-board ST-LINK |
-| Wemos D1 Mini (ESP8266) | Cat 10 – Cat 14 | Wi-Fi modem running AT-command firmware |
+| Wemos D1 Mini (ESP8266) | Cat 10 – Cat 15 | Wi-Fi modem running AT-command firmware |
 | I²C sensor module | Cat 13 | Connected to the STM32 over I²C |
+| DHT11 module, LED, buzzer | Cat 15 | Rack temperature/humidity sensor (single-wire) and local alarm |
 | USB-to-TTL serial converter | Cat 6, Cat 9 – Cat 11 | PC terminal (PuTTY / Tera Term) |
 
 ## Tools
@@ -52,6 +54,8 @@ Each experiment folder (`CATn`) has its own **README.md** with the hardware used
 | **Keil MDK-ARM** / **STM32CubeIDE** | Building and flashing the STM32 projects |
 | STM32Cube HAL | STM32 peripheral drivers (in each project's `Drivers/` folder) |
 | Proteus | 8051 circuit simulation |
+| Node-RED + Dashboard | MQTT dashboard and flows (Cat 15, `flows.json`) |
+| MQTT broker (broker.emqx.io) | Public broker used in Cat 14 and Cat 15 |
 | PuTTY / Tera Term | Serial terminal |
 
 ## Repository Layout
@@ -73,4 +77,4 @@ Build output is not committed (see [.gitignore](.gitignore)): Keil's `Listings/`
 
 **8051 (Keil µVision):** open the experiment's `.uvproj` file and choose **Project → Build Target (F7)**. The HEX file is written to the project's `Objects/` folder. Flash it to the AT89S52 with an ISP programmer.
 
-**STM32 (STM32CubeIDE):** choose **File → Import → General → Existing Projects into Workspace**, select the project folder, then **Project → Build Project**. Flash and debug with **Run → Debug** through the ST-Link. For the Wi-Fi experiments (Cat 10 – Cat 14), set your own Wi-Fi network name and password in `main.c` first.
+**STM32 (STM32CubeIDE):** choose **File → Import → General → Existing Projects into Workspace**, select the project folder, then **Project → Build Project**. Flash and debug with **Run → Debug** through the ST-Link. For the Wi-Fi experiments (Cat 10 – Cat 15), set your own Wi-Fi network name and password in `main.c` first.
